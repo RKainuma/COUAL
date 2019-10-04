@@ -8,11 +8,11 @@
     </form>
     <p>
         {% if raw_img_url %}
-            <img src="{{ raw_img_url }}">
+            <img src="data:image/png;base64, {{ raw_img_url }}">
         {% endif %}
 
         {% if gray_img_url %}
-            <img src="{{ gray_img_url }}">
+            <img src="data:image/png;base64, {{ gray_img_url }}">
         {% endif %}
     </p>
 </div>

@@ -3,8 +3,9 @@
 import os
 import io
 import time
-import numpy as np
 import cv2
+import base64
+import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug import secure_filename
 from colorDetector import Color
@@ -41,13 +42,16 @@ def send():
         img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
         # 元画像のリサイズ
         raw_img = cv2.resize(img, (IMAGE_WIDTH, int(IMAGE_WIDTH*img.shape[0]/img.shape[1])))
-        cv2.imwrite("./in.jpg", raw_img)
+        result, encimg = cv2.imencode(".jpg", img, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+        orgImg = base64.b64encode(encimg).decode("utf-8")
+        # cv2.imwrite("./in.jpg", raw_img)
         
         # なにがしかの加工
-        Color.read_input_image(img)
-
-        # return render_template('index.html', raw_img_url="static/out.jpg", gray_img_url="static/gray.jpg")
-        return redirect(url_for('index')) #NOTE base64エンコードしたデータを返す
+        out = Color.read_input_image(img)
+        result, encimg = cv2.imencode(".jpg", out, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+        outImg = base64.b64encode(encimg).decode("utf-8")
+        return render_template('index.html', raw_img_url=orgImg, gray_img_url=outImg)
+        # return redirect(url_for('index')) #NOTE base64エンコードしたデータを返す
     else:
         return redirect(url_for('index'))
 

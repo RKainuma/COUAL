@@ -18,8 +18,8 @@ class Color():
         if ret is not None:
             cv2.circle(img, ret, 10, (0,0,0
                 ),-1)
-        cv2.imwrite("out.png", img)
-
+        # cv2.imwrite("out.png", img)
+        return img
     @classmethod
     def detect_red_color(cls, img):
         # HSV色空間に変換
