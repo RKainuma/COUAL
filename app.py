@@ -3,19 +3,23 @@
 import os
 import io
 import time
-import cv2
 import base64
+from werkzeug import secure_filename
+
+import cv2
 import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
-from werkzeug import secure_filename
+
 from colorDetector import Color
+
 app = Flask(__name__)
 
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'PNG', 'JPG'])
 IMAGE_WIDTH = 640
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SECRET_KEY'] = os.urandom(24)
+QUARITY = 90
+ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -35,29 +39,26 @@ def send():
         else:
             return ''' <p>許可されていない拡張子です</p> '''
 
-        # Read image and adjust to data-type, OpenCV coveres
-        f = img_file.stream.read()
-        bin_data = io.BytesIO(f)
-        file_bytes = np.asarray(bytearray(bin_data.read()), dtype=np.uint8)
-        img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-        # 元画像のリサイズ
-        raw_img = cv2.resize(img, (IMAGE_WIDTH, int(IMAGE_WIDTH*img.shape[0]/img.shape[1])))
-        result, encimg = cv2.imencode(".jpg", img, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
-        orgImg = base64.b64encode(encimg).decode("utf-8")
-        # cv2.imwrite("./in.jpg", raw_img)
-        
-        # なにがしかの加工
-        out = Color.read_input_image(img)
-        result, encimg = cv2.imencode(".jpg", out, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
-        outImg = base64.b64encode(encimg).decode("utf-8")
-        return render_template('index.html', raw_img_url=orgImg, gray_img_url=outImg)
-        # return redirect(url_for('index')) #NOTE base64エンコードしたデータを返す
-    else:
-        return redirect(url_for('index'))
+        # Read image and adjust to OpenCV coverable data-type
+        read_file = img_file.stream.read()
+        bin_img = io.BytesIO(read_file)
+        np_img = np.asarray(bytearray(bin_img.read()), dtype=np.uint8)
+        dec_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+        # Resize original-image
+        org_img = cv2.resize(dec_img, (IMAGE_WIDTH, int(IMAGE_WIDTH*dec_img.shape[0]/dec_img.shape[1])))
+        result, enc_img = cv2.imencode(".jpg", org_img, ENCODE_PARAMS)
+        org_img = base64.b64encode(enc_img).decode("utf-8")
+
+        #NOTE まだ緑しか見つけてないけど、ベースの仕組みはこれ
+        out_img = Color.read_input_image(dec_img)
+        result, enc_img = cv2.imencode(".jpg", out_img, ENCODE_PARAMS)
+        result_img = base64.b64encode(enc_img).decode("utf-8")
+
+        return render_template('index.html', original_img=org_img, result_img=result_img)
+
+    else:
+        return redirect(url_for('index.html'))
 
 
 if __name__ == '__main__':

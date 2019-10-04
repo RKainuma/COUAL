@@ -7,12 +7,12 @@
         <input type="submit" value="送信">
     </form>
     <p>
-        {% if raw_img_url %}
-            <img src="data:image/png;base64, {{ raw_img_url }}">
+        {% if original_img %}
+            <img src="data:image/png;base64, {{ original_img }}">
         {% endif %}
 
-        {% if gray_img_url %}
-            <img src="data:image/png;base64, {{ gray_img_url }}">
+        {% if result_img %}
+            <img src="data:image/png;base64, {{ result_img }}">
         {% endif %}
     </p>
 </div>
