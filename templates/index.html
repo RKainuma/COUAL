@@ -1,12 +1,20 @@
 {% extends "layout.html" %}
 
 {% block body %}
-  <h1>File Uploader</h1>
-  <div class="view_box">
-    <form action="/" method="POST" enctype="multipart/form-data">
-      <input type="file" class="file" name="inputImg">
-      <button type="submit">submit</button>
+<div class="view_box">
+    <form method="post" action="/send" enctype="multipart/form-data">
+        <input type="file" name="img_file" class="file">
+        <input type="submit" value="送信">
     </form>
-  </div>
+    <p>
+        {% if raw_img_url %}
+            <img src="{{ raw_img_url }}">
+        {% endif %}
+
+        {% if gray_img_url %}
+            <img src="{{ gray_img_url }}">
+        {% endif %}
+    </p>
+</div>
 {% endblock %}
 

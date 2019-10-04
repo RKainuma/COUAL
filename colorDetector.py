@@ -10,15 +10,15 @@ class Color():
 
     @classmethod
     def read_input_image(cls, img):
-        print(img)
-        inputImg = cv2.imread(img)
+        # print(img)
+        # inputImg = cv2.imread(img)
         # ret = cls.detect_red_color(inputImg)
         # ret = cls.detect_blue_color(inputImg)
-        ret = cls.detect_green_color(inputImg)
+        ret = cls.detect_green_color(img)
         if ret is not None:
-            cv2.circle(inputImg, ret, 10, (0,0,0
+            cv2.circle(img, ret, 10, (0,0,0
                 ),-1)
-        cv2.imwrite("out.png", inputImg)
+        cv2.imwrite("out.png", img)
 
     @classmethod
     def detect_red_color(cls, img):
@@ -62,7 +62,7 @@ class Color():
         # 面積を計算
         areas = np.array(list(map(cv2.contourArea,contours)))
 
-        if len(areas) == 0 or np.max(areas) / (h*w) < AREA_RATIO_THRESHOLD:
+        if len(areas) == 0 or np.max(areas) / (h*w) < cls.AREA_RATIO_THRESHOLD:
             # 見つからなかったらNoneを返す
             print("the area is too small")
             return None
