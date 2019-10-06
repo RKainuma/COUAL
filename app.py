@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'PNG', 'JPG'])
-IMAGE_WIDTH = 640
+IMAGE_WIDTH = 500
 QUARITY = 90
 ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
 
@@ -44,14 +44,13 @@ def send():
         bin_img = io.BytesIO(read_file)
         np_img = np.asarray(bytearray(bin_img.read()), dtype=np.uint8)
         dec_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+        resized_img = cv2.resize(dec_img, (IMAGE_WIDTH, int(IMAGE_WIDTH*dec_img.shape[0]/dec_img.shape[1])))
 
         # Resize original-image
-        org_img = cv2.resize(dec_img, (IMAGE_WIDTH, int(IMAGE_WIDTH*dec_img.shape[0]/dec_img.shape[1])))
-        result, enc_img = cv2.imencode(".jpg", org_img, ENCODE_PARAMS)
+        result, enc_img = cv2.imencode(".jpg", resized_img, ENCODE_PARAMS)
         org_img = base64.b64encode(enc_img).decode("utf-8")
 
-        #NOTE まだ緑しか見つけてないけど、ベースの仕組みはこれ
-        out_img = Color.read_input_image(dec_img)
+        out_img = Color.read_input_image(resized_img)
         result, enc_img = cv2.imencode(".jpg", out_img, ENCODE_PARAMS)
         result_img = base64.b64encode(enc_img).decode("utf-8")
 
