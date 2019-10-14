@@ -7,13 +7,30 @@
         <input type="submit" id="submit" value="送信">
     </form>
     <p>
-        {% if original_img %}
-        <img src="data:image/png;base64, {{ original_img }}">
-        {% endif %}
+        <div>
+            <fieldset style="border: 1px double #000;width:30%;float:left;">
+                <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
+                    アップロード画像
+                </legend>
+                {% if original_img %}
+                <img src="data:image/png;base64, {{ original_img }}" style="width:90%;margin: 20px;">
+                {% endif %}
+            </fieldset>
+        </div>
+        <div>
+            <fieldset style="border: 1px double #000;width:30%;float:left;">
+                <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
+                    解析後画像
+                </legend>
+                {% if result_img %}
+                <img src="data:image/png;base64, {{ result_img }}" style="width:90%;margin: 20px;">
+                {% endif %}
+            </fieldset>
 
-        {% if result_img %}
-        <img src="data:image/png;base64, {{ result_img }}">
-        {% endif %}
+        </div>
+        <div class="box18" style="width:30%;float:left;margin: 20px;height: 300px;">
+            <p3 style="color: grey">解析結果を表示します。。。</p3>
+        </div>
     </p>
 </div>
 {% endblock %}
