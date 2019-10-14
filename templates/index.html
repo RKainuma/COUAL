@@ -4,17 +4,16 @@
 <div class="view_box">
     <form method="post" action="/send" enctype="multipart/form-data">
         <input type="file" name="img_file" class="file">
-        <input type="submit" value="送信">
+        <input type="submit" id="submit" value="送信">
     </form>
     <p>
         {% if original_img %}
-            <img src="data:image/png;base64, {{ original_img }}">
+        <img src="data:image/png;base64, {{ original_img }}">
         {% endif %}
 
         {% if result_img %}
-            <img src="data:image/png;base64, {{ result_img }}">
+        <img src="data:image/png;base64, {{ result_img }}">
         {% endif %}
     </p>
 </div>
 {% endblock %}
-

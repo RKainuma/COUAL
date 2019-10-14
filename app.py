@@ -5,6 +5,7 @@ import io
 import time
 import base64
 from werkzeug import secure_filename
+from tkinter import messagebox
 
 import cv2
 import numpy as np
@@ -36,6 +37,8 @@ def send():
         # 変なファイル弾き
         if img_file and allowed_file(img_file.filename): 
             filename = secure_filename(img_file.filename)
+        elif img_file.filename is '':
+            return ''' <p>ファイルを選択してください</p> ''' 
         else:
             return ''' <p>許可されていない拡張子です</p> '''
 
