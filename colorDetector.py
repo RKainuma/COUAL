@@ -45,13 +45,13 @@ class Color:
     @classmethod
     def detect_red_color(cls):
         # 赤色のHSVの値域1
-        hsv_min = np.array([0,64,0])
-        hsv_max = np.array([30,255,255])
+        hsv_min = np.array([0,190,180])
+        hsv_max = np.array([15,255,220])
         ex_img1 = cv2.inRange(cls.hsv, hsv_min, hsv_max)
 
         # 赤色のHSVの値域2
-        hsv_min = np.array([150,64,0])
-        hsv_max = np.array([179,255,255])
+        hsv_min = np.array([165,190,180])
+        hsv_max = np.array([179,255,220])
         ex_img2 = cv2.inRange(cls.hsv, hsv_min, hsv_max)
 
         ex_img = ex_img1 + ex_img2
