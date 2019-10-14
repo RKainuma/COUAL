@@ -56,10 +56,11 @@ button:hover {
 
 .box18 {
   margin: 2em 0;
-  position: relative;
   padding: 0.25em 1em;
   border: solid 2px #7856f3;
   border-radius: 3px 0 3px 0;
+  right: 5%;
+  position: fixed;
 }
 
 .box18:before,
