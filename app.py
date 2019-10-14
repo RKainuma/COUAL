@@ -53,7 +53,8 @@ def send():
         result, enc_img = cv2.imencode(".jpg", resized_img, ENCODE_PARAMS)
         org_img = base64.b64encode(enc_img).decode("utf-8")
 
-        out_img = Color.read_input_image(resized_img)
+        out_img, detection_result = Color.read_input_image(resized_img) #NOTE: detection_result is json data
+        print(detection_result)
         result, enc_img = cv2.imencode(".jpg", out_img, ENCODE_PARAMS)
         result_img = base64.b64encode(enc_img).decode("utf-8")
 
