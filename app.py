@@ -5,7 +5,7 @@ import io
 import time
 import base64
 from werkzeug import secure_filename
-from tkinter import messagebox
+import matplotlib.pyplot as plt
 
 import cv2
 import numpy as np
@@ -48,12 +48,14 @@ def send():
         np_img = np.asarray(bytearray(bin_img.read()), dtype=np.uint8)
         dec_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
         resized_img = cv2.resize(dec_img, (IMAGE_WIDTH, int(IMAGE_WIDTH*dec_img.shape[0]/dec_img.shape[1])))
-
+        
         # Resize original-image
         result, enc_img = cv2.imencode(".jpg", resized_img, ENCODE_PARAMS)
         org_img = base64.b64encode(enc_img).decode("utf-8")
+        
+        out_img, detection_result = Color.analyse(resized_img)
+        # out_img, detection_result = Color.read_input_image(resized_img) #NOTE: detection_result is json data
 
-        out_img, detection_result = Color.read_input_image(resized_img) #NOTE: detection_result is json data
         result, enc_img = cv2.imencode(".jpg", out_img, ENCODE_PARAMS)
         result_img = base64.b64encode(enc_img).decode("utf-8")
         
