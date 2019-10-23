@@ -53,13 +53,12 @@ def send():
         result, enc_img = cv2.imencode(".jpg", resized_img, ENCODE_PARAMS)
         org_img = base64.b64encode(enc_img).decode("utf-8")
         
-        out_img, detection_result = Color.analyse(resized_img)
-        # out_img, detection_result = Color.read_input_image(resized_img) #NOTE: detection_result is json data
+        analyzed_img, detection_result = Color.analyse(resized_img)
 
-        result, enc_img = cv2.imencode(".jpg", out_img, ENCODE_PARAMS)
-        result_img = base64.b64encode(enc_img).decode("utf-8")
+        result, enc_img = cv2.imencode(".jpg", analyzed_img, ENCODE_PARAMS)
+        analyzed_img = base64.b64encode(enc_img).decode("utf-8")
         
-        return render_template('index.html', original_img=org_img, result_img=result_img, detection_result=detection_result)
+        return render_template('index.html', original_img=org_img, result_img=analyzed_img, detection_result=detection_result)
 
     else:
         return redirect(url_for('index.html'))

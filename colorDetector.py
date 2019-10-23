@@ -6,8 +6,6 @@ import json
 
 from image_processors import rgb_to_hsv
 
-
-
 class Color: 
 
     AREA_RATION_THRESHOLD = 0.01
@@ -19,11 +17,11 @@ class Color:
     hsv_max1_array = [15,255,220]
     hsv_min2_array = [165,190,180]
     hsv_max2_array = [179,255,220]
-    img_info={}
-    vsize = 16
-    hsize = 16
-    vertical_divisions = 0
-    side_divisions = 0
+    vsize = 16 #垂直方向の画像分割サイズ
+    hsize = 16 #水平方向の画像分割サイズ
+    vertical_divisions = 0 #垂直方向の画像分割数
+    horizontal_divisions = 0 #水平方向の画像分割数
+    need_generate_recommend_image = False
 
     @classmethod
     def exist_warning_coler(cls, target_img):
@@ -37,32 +35,42 @@ class Color:
 
     @classmethod
     def analyse(cls, target_img):
-        vertical_divisions, side_divisions, sliced_imgs, message = cls.slice_and_detect_image(target_img)
-        return cls.merge_image(vertical_divisions, side_divisions, sliced_imgs), message
+        vertical_divisions, horizontal_divisions, sliced_imgs, message = cls.slice_and_detect_image(target_img)
+        if (cls.need_generate_recommend_image) :
+            merged_img = cls.merge_image(vertical_divisions, horizontal_divisions, sliced_imgs)
+            recommend_img = cls.generate_recommend_image()
+            return merged_img, merged_img, message
+        else :
+            merged_img = cls.merge_image(vertical_divisions, horizontal_divisions, sliced_imgs)
+            return merged_img, message
 
     @classmethod
     def slice_and_detect_image(cls, target_img):
         selected_img_height, selected_img_wide = target_img.shape[:2]  # 画像の大きさ
-        vertical_divisions, side_divisions = np.floor_divide([selected_img_height, selected_img_wide], [cls.vsize, cls.hsize])  # 分割数
+        vertical_divisions, horizontal_divisions = np.floor_divide([selected_img_height, selected_img_wide], [cls.vsize, cls.hsize])
 
         # 均等に分割できないと np.spllt() が使えないので、除算したときに余りがでないように画像の端数を切り捨てる。
-        crop_img = target_img[:vertical_divisions * cls.vsize, :side_divisions * cls.hsize]
+        crop_img = target_img[:vertical_divisions * cls.vsize, :horizontal_divisions * cls.hsize]
         # 分割する。
         sliced_imgs = []
         message = '画像に問題はありません。'
         for h_img in np.vsplit(crop_img, vertical_divisions):  # 垂直方向に分割する。
-            for v_img in np.hsplit(h_img, side_divisions):  # 水平方向に分割する。
+            for v_img in np.hsplit(h_img, horizontal_divisions):  # 水平方向に分割する。
                 if(cls.exist_warning_coler(v_img)):
-                    v_img = cv2.rectangle(v_img, (0, 0), (cls.vsize, cls.hsize), (255, 0, 0), 3, 4)
+                    v_img = cv2.rectangle(v_img, (0, 0), (cls.vsize, cls.hsize), (255, 255, 0), 2, 4)
                     message = cls.generate_message()
                 sliced_imgs.append(v_img)
         sliced_imgs = np.array(sliced_imgs)
-        return vertical_divisions, side_divisions, sliced_imgs, message
+        return vertical_divisions, horizontal_divisions, sliced_imgs, message
     
     @classmethod
-    def merge_image(cls, vertical_divisions, side_divisions, sliced_imgs):
+    def merge_image(cls, vertical_divisions, horizontal_divisions, sliced_imgs):
         marge_vsize, marge_hsize, ch = sliced_imgs.shape[1:]
-        split_imgs = sliced_imgs.reshape(vertical_divisions, side_divisions, marge_vsize, marge_hsize, ch)
+        split_imgs = sliced_imgs.reshape(vertical_divisions, horizontal_divisions, marge_vsize, marge_hsize, ch)
+        return np.vstack([np.hstack(h_imgs) for h_imgs in split_imgs])
+
+    @classmethod
+    def generate_recommend_image(cls, vertical_divisions, horizontal_divisions, sliced_imgs):
         return np.vstack([np.hstack(h_imgs) for h_imgs in split_imgs])
 
     @classmethod
