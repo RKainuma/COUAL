@@ -5,9 +5,18 @@
     <h1 id="title">COUAL -Web Site Analyzer-</h1>
 </div>
 <div class="view_box">
-    <form method="post" action="/send" enctype="multipart/form-data">
-        <input type="file" name="img_file" class="file">
-        <input type="submit" id="submit" value="送信">
+    <form method="post" action="/send" enctype="multipart/form-data" style="border-style : none;">
+        <div id="drag-drop-cover-area" style="background-color: #dcdcdc;">
+            <div id="drag-drop-area" style="border-style : dashed;border-color: #a9a9a9;">
+                <div class="drag-drop-inside">
+                    <p class="drag-drop-info">ここにファイルをドロップ</p>
+                    <p>または</p>
+                    <p class="drag-drop-buttons"><input id="fileInput" class="file" name="img_file" type="file"
+                            value="ファイルを選択" name="image"></p>
+                </div>
+            </div>
+        </div>
+        <input type="submit" id="submit" value="解析">
     </form>
     <p>
         <div>
