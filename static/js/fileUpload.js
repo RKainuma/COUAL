@@ -23,4 +23,12 @@ $(document).ready(function () {
         var files = evt.dataTransfer.files;
         fileInput.files = files;
     });
+    var ebcp = new EightBitColorPicker({
+        el: 'target'
+    })
+
+    var el = document.getElementById('target')
+    var ebcp = new EightBitColorPicker({
+        el: el
+    })
 });

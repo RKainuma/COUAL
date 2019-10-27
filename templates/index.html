@@ -4,45 +4,48 @@
 <div>
     <h1 id="title">COUAL -Web Site Analyzer-</h1>
 </div>
-<div class="view_box">
-    <form method="post" action="/send" enctype="multipart/form-data" style="border-style : none;">
-        <div id="drag-drop-cover-area" style="background-color: #dcdcdc;">
-            <div id="drag-drop-area" style="border-style : dashed;border-color: #a9a9a9;">
-                <div class="drag-drop-inside">
-                    <p class="drag-drop-info">ここにファイルをドロップ</p>
-                    <p>または</p>
-                    <p class="drag-drop-buttons"><input id="fileInput" class="file" name="img_file" type="file"
-                            value="ファイルを選択" name="image"></p>
-                </div>
+<form method="post" action="/send" enctype="multipart/form-data">
+    <div id="drag-drop-cover-area" style="background-color: #dcdcdc;">
+        <div id="drag-drop-area" style="border-style : dashed;border-color: #a9a9a9;">
+            <div class="drag-drop-inside">
+                <p class="drag-drop-info">ここにファイルをドロップ</p>
+                <p>または</p>
+                <p class="drag-drop-buttons"><input id="fileInput" class="file" name="img_file" type="file"
+                        value="ファイルを選択" name="image"></p>
             </div>
         </div>
-        <input type="submit" id="submit" value="解析">
-    </form>
-    <p>
-        <div>
-            <fieldset style="border: 1px double #000;width:30%;float:left;">
-                <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
-                    アップロード画像
-                </legend>
-                {% if original_img %}
-                <img src="data:image/png;base64, {{ original_img }}" style="width:90%;margin: 20px;">
-                {% endif %}
-            </fieldset>
-        </div>
-        <div>
-            <fieldset style="border: 1px double #000;width:30%;float:left;">
-                <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
-                    解析後画像
-                </legend>
-                {% if result_img %}
-                <img src="data:image/png;base64, {{ result_img }}" style="width:90%;margin: 20px;">
-                {% endif %}
-            </fieldset>
-
-        </div>
-        <div class="box18" style="width:30%;float:left;margin: 20px;">
-            <p3 style="color: grey">{{ detection_result }}</p3>
-        </div>
-    </p>
+    </div>
+    <input type="submit" id="submit" value="解析">
+</form>
+<div id="color_editor">
+    変更前の色<br>
+    <span style="float: left;">
+        変更後の色
+    </span>
+    <div id="target"></div>
+    <button type=" button" name="apply_color" value="value">適用</button>
+</div>
+<div id="upload_img_area">
+    <fieldset style="border: 1px double #000;">
+        <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
+            アップロード画像
+        </legend>
+        {% if original_img %}
+        <img src="data:image/png;base64, {{ original_img }}" style="width:90%;margin: 20px;">
+        {% endif %}
+    </fieldset>
+</div>
+<div id="analyzed_img_area">
+    <fieldset style="border: 1px double #000;">
+        <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
+            解析後画像
+        </legend>
+        {% if result_img %}
+        <img src="data:image/png;base64, {{ result_img }}" style="width:90%;margin: 20px;">
+        {% endif %}
+    </fieldset>
+</div>
+<div class="box18" style="width:30%;float:left;margin: 20px;">
+    <p3 style="color: grey">{{ detection_result }}</p3>
 </div>
 {% endblock %}
