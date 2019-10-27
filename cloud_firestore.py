@@ -9,7 +9,7 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-# メインコレクションから親ドキュメントを取得
+# colors コレクションからドキュメントを取得
 colors_ref = db.collection('colors')
 main_docs = colors_ref.get()
 
