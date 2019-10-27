@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import cv2
-import numpy as np
 import json
+import numpy as np
 
 from image_processors import rgb_to_hsv
 
