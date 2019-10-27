@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-import io
-import time
 import base64
-from werkzeug import secure_filename
+import io
 import matplotlib.pyplot as plt
+import os
+import time
+from werkzeug import secure_filename
 
 import cv2
-import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
+import numpy as np
 
 from colorDetector import Color
 
@@ -47,13 +47,12 @@ def send():
         bin_img = io.BytesIO(read_file)
         np_img = np.asarray(bytearray(bin_img.read()), dtype=np.uint8)
         dec_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
-        resized_img = cv2.resize(dec_img, (IMAGE_WIDTH, int(IMAGE_WIDTH*dec_img.shape[0]/dec_img.shape[1])))
         
         # Resize original-image
-        result, enc_img = cv2.imencode(".jpg", resized_img, ENCODE_PARAMS)
+        result, enc_img = cv2.imencode(".jpg", dec_img, ENCODE_PARAMS)
         org_img = base64.b64encode(enc_img).decode("utf-8")
         
-        analyzed_img, detection_result = Color.analyse(resized_img)
+        analyzed_img, detection_result = Color.analyse(dec_img)
 
         result, enc_img = cv2.imencode(".jpg", analyzed_img, ENCODE_PARAMS)
         analyzed_img = base64.b64encode(enc_img).decode("utf-8")
