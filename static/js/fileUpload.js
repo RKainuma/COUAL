@@ -1,7 +1,7 @@
 'use strict';
 
 $(document).ready(function () {
-    $("#submit").click(function () {
+    $("#analyze").click(function () {
         // ajaxかなんかでpython関数呼ぶ
     });
     var fileArea = document.getElementById('drag-drop-area');
