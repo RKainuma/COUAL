@@ -41,10 +41,11 @@
             解析後画像
         </legend>
         {% if result_img %}
-        <img src="data:image/png;base64, {{ result_img }}" style="width:90%;margin: 20px;">
+        <canvas src="data:image/png;base64, {{ result_img }}" style="width:90%;margin: 20px;"></canvas>
         {% endif %}
     </fieldset>
 </div>
+
 <div class="box18" style="width:30%;float:left;margin: 20px;">
     <p3 style="color: grey">{{ detection_result }}</p3>
 </div>
