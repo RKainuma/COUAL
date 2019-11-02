@@ -3,8 +3,10 @@
 import cv2
 import json
 import numpy as np
+import matplotlib.pyplot as plt
 
 from image_processors import rgb_to_hsv
+from subtractive_color import execute
 
 class Color: 
 
@@ -13,10 +15,12 @@ class Color:
     s = None
     v = None
     hsv = None
-    hsv_min1_array = [0,190,180]
-    hsv_max1_array = [15,255,220]
-    hsv_min2_array = [165,190,180]
-    hsv_max2_array = [179,255,220]
+    hsv_min1_array = [0,130,130]
+    hsv_max1_array = [15,255,255]
+    hsv_min2_array = [165,130,130]
+    hsv_max2_array = [179,255,255]
+    hsv_min_green_array = [15,130,130]
+    hsv_max_green_array = [90,255,255]
     vsize = 16 #垂直方向の画像分割サイズ
     hsize = 16 #水平方向の画像分割サイズ
     vertical_divisions = 0 #垂直方向の画像分割数
@@ -24,14 +28,11 @@ class Color:
     need_generate_recommend_image = False
 
     @classmethod
-    def exist_warning_coler(cls, target_img):
+    def exist_warning_coler(cls, img):
+        target_img = execute(img)
         cls.h, cls.w, cls.c = target_img.shape
         cls.hsv = rgb_to_hsv(target_img)
-        target_positon = cls.detect_red_color()
-        if target_positon is None:
-            return False
-        else:
-            return True
+        return cls.detect_red_color()
 
     @classmethod
     def analyse(cls, target_img):
@@ -76,29 +77,24 @@ class Color:
     @classmethod
     def detect_red_color(cls):
         # 赤色のHSVの値域
-        ex_img = cv2.inRange(cls.hsv, np.array(cls.hsv_min1_array), np.array(cls.hsv_max1_array)) + cv2.inRange(cls.hsv, np.array(cls.hsv_min2_array), np.array(cls.hsv_max2_array))
+        ex_img_red = cv2.inRange(cls.hsv, np.array(cls.hsv_min1_array), np.array(cls.hsv_max1_array)) + cv2.inRange(cls.hsv, np.array(cls.hsv_min2_array), np.array(cls.hsv_max2_array))
+        # 緑色のHSVの値域
+        ex_img_green = cv2.inRange(cls.hsv, np.array(cls.hsv_min_green_array), np.array(cls.hsv_max_green_array))
 
         # 輪郭抽出
-        contours,hierarchy = cv2.findContours(ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+        contours_red,hierarchy_red = cv2.findContours(ex_img_red, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+        contours_green,hierarchy_green = cv2.findContours(ex_img_green, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
         # 面積を計算
-        areas = np.array(list(map(cv2.contourArea, contours)))
+        red_areas = np.array(list(map(cv2.contourArea, contours_red)))
+        green_areas = np.array(list(map(cv2.contourArea, contours_green)))
 
-        if len(areas) == 0 or np.max(areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
-
-            return None
-
+        if len(red_areas) == 0 or np.max(red_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
+            return False
+        elif len(green_areas) == 0 or np.max(green_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
+            return False
         else:
-            # 赤色空間の中心座標を取得
-            target_areas = np.nonzero(areas)
-            lst=[]
-            for idx in target_areas[0]:
-                result = cv2.moments(contours[idx])
-                x = int(result["m10"]/result["m00"])
-                y = int(result["m01"]/result["m00"])
-                lst.append((x,y))
-
-            return lst
+            return True
     
     @classmethod
     def generate_message(cls):
