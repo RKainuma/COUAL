@@ -12,6 +12,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import numpy as np
 
 from colorDetector import Color
+from cloud_firestore import post_color_scheme
 
 app = Flask(__name__)
 
@@ -61,6 +62,37 @@ def send():
 
     else:
         return redirect(url_for('index.html'))
+
+
+@app.route('/maintenance')
+def maintenance(): 
+
+    return render_template('maintenance.html')
+
+
+@app.route('/post_colors', methods=['POST'])
+def post_colors(): 
+    results = request.form
+    base_hsv = results["base-color"]
+    base_color_name = results["base-color-name"]
+
+    for i, result in enumerate(results):
+
+        if len(result) < 6:
+            if "neg" in result:
+                pattern_stat = "negative"
+                accent_hsv = results[result]
+                accent_color = results[str(result + "-name")]
+            elif "pos" in result:
+                pattern_stat = "positive"
+                accent_hsv = results[result]
+                accent_color = results[str(result + "-name")]
+            post_color_scheme(base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color)
+
+        else:
+            pass
+
+    return redirect(url_for('maintenance'))
 
 
 if __name__ == '__main__':
