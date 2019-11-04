@@ -1,60 +1,55 @@
-html {
-  box-sizing: border-box;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: sans-serif;
-}
-
-main {
-  margin: 0 auto;
-  max-width: 100%;
-  padding: 20px;
-}
-
-label,
-input,
-button {
-  display: block;
-  font-size: 16px;
-  margin: 0 0 8px 0;
-  width: 100%;
-}
-
 form {
-  border: 1px solid #444;
-  max-width: 100%;
-  padding: 10px;
-  margin: 10px;
   width: 400px;
+  border-style: none;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 0px;
+  float: left;
 }
 
-button {
+#color_editor {
+  border: 1px solid white;
+  padding: 10px;
+  width: 400px;
+  margin-right: 10px;
+  float: left;
+  color: white;
+}
+
+#upload_img_area {
+  clear: both;
+  float: left;
+  width: 30%;
+}
+
+#analyzed_img_area {
+  float: left;
+  width: 30%;
+}
+
+/* Bottom css start */
+button,
+#submit {
   background: transparent;
-  border: 1px solid #444;
+  border: 1px solid white;
+  color: white;
+  background-color: #787878;
   border-radius: 4px;
   cursor: pointer;
-  margin: 0;
   padding: 4px 0;
+  margin-top: 10px;
+  width: 350px;
 }
 
-button:hover {
-  background: #444;
-  color: #fff;
+button:hover,
+#submit:hover {
+  background: white;
+  color: #585858;
 }
 
+/* Bottom css end */
+
+/* Analyze message display area start */
 .box18 {
   margin: 2em 0;
   padding: 0.25em 1em;
@@ -89,55 +84,28 @@ button:hover {
   padding: 0;
 }
 
+/* Analyze message display area end */
+
+/* title display area start */
 #title {
   position: relative;
   padding: 0.2em 0.5em;
-  background: -webkit-linear-gradient(to right, rgb(255, 124, 111), #ffc994);
   background: linear-gradient(to right, rgb(255, 124, 111), #ffc994);
   color: white;
   font-weight: lighter;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.56);
 }
 
-#dropzone {
-  background-color: #cfc;
-  border: solid 3px #9c9;
-  color: #9c9;
-  min-height: 50px;
-  padding: 20px;
-  text-shadow: 1px 1px 0 #fff;
-}
-
-#dropzone.dropover {
-  background-color: #cff;
-  color: #9cc;
-}
-
-#files:empty::before {
-  color: #ccc;
-  content: "(Files data will be shown here.)";
-}
-
-#files img {
-  border: solid 1px #ccc;
-  cursor: pointer;
-  height: auto;
-  margin: 0 10px;
-  max-height: 128px;
-  max-width: 128px;
-  width: auto;
-}
-
-#submit {
-  margin-top: 10px;
-  width: 350px;
-}
-
+/* title display area end */
 #drag-drop-cover-area {
   padding: 5px;
 }
 
 div.drag-drop-inside {
   margin: 5px;
-  size: 1;
+}
+
+#target {
+  float: left;
+  margin-left: 10px;
 }
