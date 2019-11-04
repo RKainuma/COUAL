@@ -13,12 +13,12 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 def post_color_scheme(base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color_name):
-    print("base_hsv=>{}".format(base_hsv))
-    print("base_color_name=>{}".format(base_color_name))
-    print("pattern_stat=>{}".format(pattern_stat))
-    print("accent_hsv=>{}".format(accent_hsv))
-    print("accent_color_name=>{}".format(accent_color_name))
-    parent_ref = db.collection('colors-schemes').document(base_hsv)
+    # print("base_hsv=>{}".format(base_hsv))
+    # print("base_color_name=>{}".format(base_color_name))
+    # print("pattern_stat=>{}".format(pattern_stat))
+    # print("accent_hsv=>{}".format(accent_hsv))
+    # print("accent_color_name=>{}".format(accent_color_name))
+    parent_ref = db.collection('color-schemes').document(base_hsv)
     children_ref = parent_ref.collection(pattern_stat).document(accent_hsv)
     children_ref.set({
         'base-color': base_color_name,
@@ -79,7 +79,6 @@ def format_hsv_numeric(hsv):
         ret = [hsv1_min_array, hsv1_max_array, hsv2_min_array, hsv2_max_array]
 
     else:
-
         hsv_min_array = [h_min, s_min, v_min]
         hsv_max_array = [h_max, s_max, v_max]
 
