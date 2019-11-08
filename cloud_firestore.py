@@ -7,24 +7,6 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 
-cred = credentials.Certificate("./coual-cefec-firebase-adminsdk-uv5bf-38b2fb2901.json") # ダウンロードした秘密鍵
-firebase_admin.initialize_app(cred)
-
-db = firestore.client()
-
-def post_color_scheme(base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color_name):
-    # print("base_hsv=>{}".format(base_hsv))
-    # print("base_color_name=>{}".format(base_color_name))
-    # print("pattern_stat=>{}".format(pattern_stat))
-    # print("accent_hsv=>{}".format(accent_hsv))
-    # print("accent_color_name=>{}".format(accent_color_name))
-    parent_ref = db.collection('color-schemes').document(base_hsv)
-    children_ref = parent_ref.collection(pattern_stat).document(accent_hsv)
-    children_ref.set({
-        'base-color': base_color_name,
-        'accent-color': accent_color_name,
-    })
-
 
 def format_hsv_numeric(hsv):
     """
@@ -40,7 +22,6 @@ def format_hsv_numeric(hsv):
     Hueの領域が179を超える値となる場合、hsv_minとhsv_macをそれぞれ２つ返す
     """
     hsv = re.findall(r'\d+', hsv)
-
     # format_hsv_numeric as for OprnCV
     h = math.ceil(int(hsv[0]) * 0.5)
     s = math.ceil(int(hsv[1]) * 2.55)
@@ -84,24 +65,48 @@ def format_hsv_numeric(hsv):
 
         ret = [hsv_min_array, hsv_max_array]
 
+    return ret
 
 
-# # colors コレクションからドキュメントを取得
-# colors_ref = db.collection('colors')
-# main_docs = colors_ref.get()
+class ColorSchemeStorage:
+    cred = credentials.Certificate("./coual-cefec-firebase-adminsdk-uv5bf-38b2fb2901.json") # ダウンロードした秘密鍵
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
+    keys_to_analyze_color_lst = []
 
-# parent_docs = []
-# print("\n\n=======ドキュメント(base_color)========")
-# for main_doc in main_docs:
-#     parent_docs.append(main_doc.id)
-#     print(main_doc.id)
+    @classmethod
+    def post_color_scheme(cls, base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color_name):
+        """配色パターンをDBにPOSTする / DBはCloud-Firestore"""
+        parent_ref = cls.db.collection('color-schemes').document(base_hsv)
+        children_ref = parent_ref.collection(pattern_stat).document(accent_hsv)
+        children_ref.set({
+            'base-color': base_color_name,
+            'accent-color': accent_color_name,
+        })
+
+    @classmethod
+    def get_keys_to_analyze_color(cls):
+        """
+        DBから取得したベースカラーの検索キーを格納した配列を生成
+        配列1番目: ベースカラーの元の値
+        配列2番目: ベースカラーをHSV空間の領域指定した値
+        配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた超えた場合に生成
+        """
+        main_docs = cls.db.collection('color-schemes').get()
+        cnt = 0
+        for main_doc in main_docs:
+            cnt += 1
+            expand_base_colors = format_hsv_numeric(main_doc.id)
+            keys_to_analyze_color = {"base_color":main_doc.id, "expand_base_color":expand_base_colors}
+            cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
+
+        return cls.keys_to_analyze_color_lst
+
+    @classmethod
+    def storage_keys_to_analyze_color(cls):
+        """get_keys_to_analyze_color()で毎回Cloud-Firestoreにアクセスするのは時間がかかるので、取得した値をクラス変数として常にアクセスできる状態で生成"""
+        return cls.keys_to_analyze_color_lst
 
 
-# print("\n\n=======サブコレクション(negative)========")
-# for parent_doc in parent_docs:
-#     bad_ref = colors_ref.document(parent_doc).collection('negative')
-#     bad_docs = bad_ref.get()
-#     print("\nドキュメントのID(base_color): {} ".format(parent_doc))
-#     for bad_doc in bad_docs:
-#         print("accent_color=> {}".format(bad_doc.id))
+
 

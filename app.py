@@ -12,7 +12,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import numpy as np
 
 from colorDetector import Color
-from cloud_firestore import post_color_scheme
+from cloud_firestore import ColorSchemeStorage
 
 app = Flask(__name__)
 
@@ -22,6 +22,9 @@ IMAGE_WIDTH = 500
 QUARITY = 90
 ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
 
+
+def starter_setups():
+    ColorSchemeStorage.get_keys_to_analyze_color()
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -66,12 +69,13 @@ def send():
 
 @app.route('/maintenance')
 def maintenance(): 
-
+    """管理画面のテンプレートをレンダリングする"""
     return render_template('maintenance.html')
 
 
 @app.route('/post_colors', methods=['POST'])
 def post_colors(): 
+    """管理画面で配色パターンをPOSTする関数を呼び、管理画面のレンダリング関数にリダイレクトする"""
     results = request.form
     base_hsv = results["base-color"]
     base_color_name = results["base-color-name"]
@@ -87,7 +91,7 @@ def post_colors():
                 pattern_stat = "positive"
                 accent_hsv = results[result]
                 accent_color = results[str(result + "-name")]
-            post_color_scheme(base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color)
+            ColorSchemeStorage.post_color_scheme(base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color)
 
         else:
             pass
@@ -96,4 +100,5 @@ def post_colors():
 
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=5000, debug=True)
+    starter_setups()
+    app.run(host='0.0.0.0', port=5000, debug=True)
