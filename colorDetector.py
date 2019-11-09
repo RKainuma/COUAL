@@ -3,7 +3,6 @@
 import cv2
 import json
 import numpy as np
-import matplotlib.pyplot as plt
 
 from image_processors import rgb_to_hsv
 from subtractive_color import execute

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import base64
 import io
-import matplotlib.pyplot as plt
 import os
 import time
 from werkzeug import secure_filename
@@ -42,10 +41,6 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    # v = ColorSchemeStorage.storage_keys_to_analyze_color()
-    # for i in v:
-    #     c = i["expand_base_color"]
-    #     print(i)
     return render_template('index.html')
 
 @app.route('/send', methods=['GET', 'POST'])

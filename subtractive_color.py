@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 
 def execute(img):
     # 画像で使用されている色一覧。(W * H, 3) の numpy 配列。
