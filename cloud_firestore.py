@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import math
+import numpy as np
 import re
 
 import firebase_admin
@@ -49,29 +50,38 @@ def format_hsv_numeric(hsv):
     h_max = h + 4
 
     if h_max > 179: # <補足参照>
-        hsv1_min_array = (h_min, s_min, v_min)
-        hsv1_max_array = (179, s_max, v_max)
+        hsv1_min_array = [h_min, s_min, v_min]
+        hsv1_max_array = [179, s_max, v_max]
 
         h_max -= 179
-        hsv2_min_array = (0, s_min, v_min)
-        hsv2_max_array = (h_max, s_max, v_max)
+        hsv2_min_array = [0, s_min, v_min]
+        hsv2_max_array = [h_max, s_max, v_max]
 
-        ret = [hsv1_min_array, hsv1_max_array, hsv2_min_array, hsv2_max_array]
-
+        ret = [np.array(hsv1_min_array), np.array(hsv1_max_array), np.array(hsv2_min_array), np.array(hsv2_max_array)]
     else:
         hsv_min_array = [h_min, s_min, v_min]
         hsv_max_array = [h_max, s_max, v_max]
 
-        ret = [hsv_min_array, hsv_max_array]
+        ret = [np.array(hsv_min_array), np.array(hsv_max_array)]
 
     return ret
 
+
+def conver_hyphen_to_comma(hsv):
+        hsv = re.findall(r'\d+', hsv)
+        h = int(hsv[0])
+        s = int(hsv[1])
+        v = int(hsv[2])
+        ret = np.array([h, s, v])
+
+        return ret
 
 class ColorSchemeStorage:
     cred = credentials.Certificate("./coual-cefec-firebase-adminsdk-uv5bf-38b2fb2901.json") # ダウンロードした秘密鍵
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     keys_to_analyze_color_lst = []
+    neg_pattern_lst = []
 
     @classmethod
     def post_color_scheme(cls, base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color_name):
@@ -91,12 +101,20 @@ class ColorSchemeStorage:
         配列2番目: ベースカラーをHSV空間の領域指定した値
         配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた場合に生成
         """
-        main_docs = cls.db.collection('color-schemes').get()
+        color_schemes_ref = cls.db.collection('color-schemes')
+        main_docs = color_schemes_ref.get()
         cnt = 0
         for main_doc in main_docs:
             cnt += 1
             expand_base_colors = format_hsv_numeric(main_doc.id)
-            keys_to_analyze_color = {"base_color":main_doc.id, "expand_base_color":expand_base_colors}
+            neg_ref = color_schemes_ref.document(main_doc.id).collection('negative').get()
+            neg_pattern_lst = []
+            for neg_pattern in neg_ref:
+                format_neg_pattern = format_hsv_numeric(neg_pattern.id)
+                neg_pattern_lst.append(format_neg_pattern)
+
+            format_base_color = conver_hyphen_to_comma(main_doc.id)
+            keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst}
             cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
 
         return cls.keys_to_analyze_color_lst

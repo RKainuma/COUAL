@@ -19,12 +19,12 @@ form {
 #upload_img_area {
   clear: both;
   float: left;
-  width: 30%;
+  width: 50%;
 }
 
 #analyzed_img_area {
   float: left;
-  width: 30%;
+  width: 50%;
 }
 
 /* Bottom css start */
