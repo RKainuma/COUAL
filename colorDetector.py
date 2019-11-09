@@ -53,8 +53,9 @@ class Color:
         for h_img in np.vsplit(crop_img, vertical_divisions):  # 垂直方向に分割する。
             for v_img in np.hsplit(h_img, horizontal_divisions):  # 水平方向に分割する。
                 warning, positive_color_bgr = cls.exist_warning_color(v_img)
+                print("****")
+                print(warning)
                 if warning:
-                    print("**********")
                     v_img = cv2.rectangle(v_img, (0, 0), (cls.vsize, cls.hsize), positive_color_bgr, 2, 4)
                     # message = cls.generate_message()
                 sliced_imgs.append(v_img)
