@@ -33,7 +33,7 @@ def get_pw(username):
     return None
 
 def starter_setups():
-    print("Loading setups")
+    print("Loading setups......")
     ColorSchemeStorage.get_keys_to_analyze_color()
 
 def allowed_file(filename):
@@ -74,7 +74,7 @@ def send():
         return render_template('index.html', original_img=org_img, result_img=analyzed_img, detection_result=detection_result)
 
     else:
-        return redirect(url_for('index.html'))
+        return redirect(url_for('index'))
 
 
 @app.route('/maintenance')
