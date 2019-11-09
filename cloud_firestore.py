@@ -7,7 +7,6 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 
-
 def format_hsv_numeric(hsv):
     """
     <OpenCV>
