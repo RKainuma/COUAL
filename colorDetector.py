@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 from image_processors import rgb_to_hsv
 from subtractive_color import execute
+from cloud_firestore import ColorSchemeStorage
 
 class Color: 
 
@@ -15,12 +16,6 @@ class Color:
     s = None
     v = None
     hsv = None
-    hsv_min1_array = [0,130,130]
-    hsv_max1_array = [15,255,255]
-    hsv_min2_array = [165,130,130]
-    hsv_max2_array = [179,255,255]
-    hsv_min_green_array = [15,130,130]
-    hsv_max_green_array = [90,255,255]
     vsize = 16 #垂直方向の画像分割サイズ
     hsize = 16 #水平方向の画像分割サイズ
     vertical_divisions = 0 #垂直方向の画像分割数
@@ -28,11 +23,11 @@ class Color:
     need_generate_recommend_image = False
 
     @classmethod
-    def exist_warning_coler(cls, img):
+    def exist_warning_color(cls, img):
         target_img = execute(img)
         cls.h, cls.w, cls.c = target_img.shape
         cls.hsv = rgb_to_hsv(target_img)
-        return cls.detect_red_color()
+        return cls.detect_warning_color()
 
     @classmethod
     def analyse(cls, target_img):
@@ -57,9 +52,9 @@ class Color:
         message = '画像に問題はありません。'
         for h_img in np.vsplit(crop_img, vertical_divisions):  # 垂直方向に分割する。
             for v_img in np.hsplit(h_img, horizontal_divisions):  # 水平方向に分割する。
-                if(cls.exist_warning_coler(v_img)):
+                if(cls.exist_warning_color(v_img)):
                     v_img = cv2.rectangle(v_img, (0, 0), (cls.vsize, cls.hsize), (255, 255, 0), 2, 4)
-                    message = cls.generate_message()
+                    # message = cls.generate_message()
                 sliced_imgs.append(v_img)
         sliced_imgs = np.array(sliced_imgs)
         return vertical_divisions, horizontal_divisions, sliced_imgs, message
@@ -75,26 +70,34 @@ class Color:
         return np.vstack([np.hstack(h_imgs) for h_imgs in split_imgs])
 
     @classmethod
-    def detect_red_color(cls):
-        # 赤色のHSVの値域
-        ex_img_red = cv2.inRange(cls.hsv, np.array(cls.hsv_min1_array), np.array(cls.hsv_max1_array)) + cv2.inRange(cls.hsv, np.array(cls.hsv_min2_array), np.array(cls.hsv_max2_array))
-        # 緑色のHSVの値域
-        ex_img_green = cv2.inRange(cls.hsv, np.array(cls.hsv_min_green_array), np.array(cls.hsv_max_green_array))
-
-        # 輪郭抽出
-        contours_red,hierarchy_red = cv2.findContours(ex_img_red, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-        contours_green,hierarchy_green = cv2.findContours(ex_img_green, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-
-        # 面積を計算
-        red_areas = np.array(list(map(cv2.contourArea, contours_red)))
-        green_areas = np.array(list(map(cv2.contourArea, contours_green)))
-
-        if len(red_areas) == 0 or np.max(red_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
-            return False
-        elif len(green_areas) == 0 or np.max(green_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
-            return False
-        else:
-            return True
+    def detect_warning_color(cls):
+        # 分割された画像にbase colorが含まれているかチェックする
+        for each in ColorSchemeStorage.storage_keys_to_analyze_color():
+            expandBaseColorArray = each['expand_base_color']
+            ex_img = None
+            # HSVの最小値・最大値を2つずつ保持する可能性があるため
+            if len(expandBaseColorArray) == 2 :
+                ex_img = cv2.inRange(cls.hsv, expandBaseColorArray[0], expandBaseColorArray[1])
+            else:
+                ex_img = cv2.inRange(cls.hsv, expandBaseColorArray[0], expandBaseColorArray[1]) + cv2.inRange(cls.hsv, expandBaseColorArray[2], expandBaseColorArray[3])
+            
+            contours,hierarchy = cv2.findContours(ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+            base_areas = np.array(list(map(cv2.contourArea, contours)))
+            
+            #base colorが存在しなければ後続の処理は実行しない
+            if len(base_areas) == 0 or np.max(base_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
+                continue
+            
+            #negative colorの存在チェック
+            for e in each['neg_pattern_lst'] :
+                n_ex_img = cv2.inRange(cls.hsv, e[0], e[1])
+                n_contours,n_hierarchy = cv2.findContours(n_ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+                negative_areas = np.array(list(map(cv2.contourArea, n_contours)))
+                #negative colorが存在しなければ問題なし
+                if len(negative_areas) == 0 or np.max(negative_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
+                    continue
+                return True
+        return False
     
     @classmethod
     def generate_message(cls):
