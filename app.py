@@ -28,7 +28,7 @@ ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
 
 @auth.get_password
 def get_pw(username):
-    """basic認証を呼ぶ関数 / aoo.maintenance()が呼ばれると認証を求める"""
+    """basic認証を呼ぶ関数 / app.maintenance()が呼ばれると認証を求める"""
     if username in admin:
         return admin.get(username)
     return None
