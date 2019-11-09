@@ -2,11 +2,27 @@
 # -*- coding: utf-8 -*-
 import math
 import numpy as np
+import os
 import re
 
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+
+CLOUD_FIRESTORE_AUTH = {
+  "type": os.environ.get("ACCOUNT_TYPE"),
+  "project_id": os.environ.get("PROJECT_ID"),
+  "private_key_id": os.environ.get("PRIVATE_KEY_ID"),
+  "private_key": os.environ.get("PRIVATE_KEY"),
+  "client_email": os.environ.get("CLIENT_EMAIL"),
+  "client_id": os.environ.get("CLIENT_ID"),
+  "auth_uri": os.environ.get("AUTH_URL"),
+  "token_uri": os.environ.get("TOKEN_URL"),
+  "auth_provider_x509_cert_url": os.environ.get("AUTH_PROVIDER_CERT_URL"),
+  "client_x509_cert_url": os.environ.get("CLIENT_CERT_URL")
+}
+
+CLOUD_FIRESTORE_AUTH_PATH = "./coual-cefec-firebase-adminsdk-uv5bf-38b2fb2901.json"
 
 def format_hsv_numeric(hsv):
     """
@@ -77,7 +93,12 @@ def conver_hyphen_to_comma(hsv):
         return ret
 
 class ColorSchemeStorage:
-    cred = credentials.Certificate("./coual-cefec-firebase-adminsdk-uv5bf-38b2fb2901.json") # ダウンロードした秘密鍵
+    if os.path.exists(CLOUD_FIRESTORE_AUTH_PATH):
+        cred = credentials.Certificate(CLOUD_FIRESTORE_AUTH_PATH) # ダウンロードした秘密鍵
+        print("CLOUD_FIRESTORE_AUTH_PATH exists")
+    else:
+        cred = credentials.Certificate(CLOUD_FIRESTORE_AUTH) # ダウンロードした秘密鍵
+        print("CLOUD_FIRESTORE_AUTH_PATH does not exists, Loaded ENVVAR on Heroku")
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     keys_to_analyze_color_lst = []
