@@ -9,19 +9,29 @@ from werkzeug import secure_filename
 
 import cv2
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
+from flask_httpauth import HTTPBasicAuth
 import numpy as np
 
 from colorDetector import Color
 from cloud_firestore import ColorSchemeStorage
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
 
+admin = {"admin": "admin"}
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'PNG', 'JPG'])
 IMAGE_WIDTH = 500
 QUARITY = 90
 ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
 
+
+@auth.get_password
+def get_pw(username):
+    """basic認証を呼ぶ関数 / aoo.maintenance()が呼ばれると認証を求める"""
+    if username in admin:
+        return admin.get(username)
+    return None
 
 def starter_setups():
     ColorSchemeStorage.get_keys_to_analyze_color()
@@ -72,6 +82,7 @@ def send():
 
 
 @app.route('/maintenance')
+@auth.login_required
 def maintenance(): 
     """管理画面のテンプレートをレンダリングする"""
     return render_template('maintenance.html')
