@@ -5,6 +5,7 @@ import json
 import numpy as np
 
 from image_processors import rgb_to_hsv
+from image_processors import hsv_to_bgr_tuple
 from subtractive_color import execute
 from cloud_firestore import ColorSchemeStorage
 
@@ -51,8 +52,9 @@ class Color:
         message = '画像に問題はありません。'
         for h_img in np.vsplit(crop_img, vertical_divisions):  # 垂直方向に分割する。
             for v_img in np.hsplit(h_img, horizontal_divisions):  # 水平方向に分割する。
-                if(cls.exist_warning_color(v_img)):
-                    v_img = cv2.rectangle(v_img, (0, 0), (cls.vsize, cls.hsize), (255, 255, 0), 2, 4)
+                warning, positive_color_bgr = cls.exist_warning_color(v_img)
+                if(warning):
+                    v_img = cv2.rectangle(v_img, (0, 0), (cls.vsize, cls.hsize), positive_color_bgr, 2, 4)
                     # message = cls.generate_message()
                 sliced_imgs.append(v_img)
         sliced_imgs = np.array(sliced_imgs)
@@ -95,8 +97,10 @@ class Color:
                 #negative colorが存在しなければ問題なし
                 if len(negative_areas) == 0 or np.max(negative_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
                     continue
-                return True
-        return False
+                
+                positive_color_hsv = each['pos_pattern_lst'][0][0]
+                return True, hsv_to_bgr_tuple(positive_color_hsv[0], positive_color_hsv[1], positive_color_hsv[2])
+        return False, None
     
     @classmethod
     def generate_message(cls):
