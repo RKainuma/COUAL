@@ -113,8 +113,14 @@ class ColorSchemeStorage:
                 format_neg_pattern = format_hsv_numeric(neg_pattern.id)
                 neg_pattern_lst.append(format_neg_pattern)
 
+            pos_ref = color_schemes_ref.document(main_doc.id).collection('positive').get()
+            pos_pattern_lst = []
+            for pos_pattern in pos_ref:
+                format_pos_pattern = format_hsv_numeric(pos_pattern.id)
+                pos_pattern_lst.append(format_pos_pattern)
+
             format_base_color = conver_hyphen_to_comma(main_doc.id)
-            keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst}
+            keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
             cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
 
         return cls.keys_to_analyze_color_lst
