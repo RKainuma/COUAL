@@ -99,3 +99,4 @@ class Color:
     @classmethod
     def generate_message(cls):
         return 'HSV[' + ','.join(map(str, cls.hsv_min2_array)) + '~' + ','.join(map(str, cls.hsv_max1_array)) + ']の色が含まれています。'
+

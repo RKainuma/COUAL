@@ -90,7 +90,7 @@ class ColorSchemeStorage:
         DBから取得したベースカラーの検索キーを格納した配列を生成
         配列1番目: ベースカラーの元の値
         配列2番目: ベースカラーをHSV空間の領域指定した値
-        配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた超えた場合に生成
+        配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた場合に生成
         """
         main_docs = cls.db.collection('color-schemes').get()
         cnt = 0
@@ -108,5 +108,21 @@ class ColorSchemeStorage:
         return cls.keys_to_analyze_color_lst
 
 
+# # メインコレクションから親ドキュメントを取得
+# colors_ref = db.collection('colors-scheme')
+# main_docs = colors_ref.get()
+
+# parent_docs = []
+# print("\n\n=======ドキュメント(base_color)========")
+# for main_doc in main_docs:
+#     parent_docs.append(main_doc.id)
+#     print(main_doc.id)
 
 
+# print("\n\n=======サブコレクション(negative)========")
+# for parent_doc in parent_docs:
+#     bad_ref = colors_ref.document(parent_doc).collection('negative')
+#     bad_docs = bad_ref.get()
+#     print("\nドキュメントのID(base_color): {} ".format(parent_doc))
+#     for bad_doc in bad_docs:
+#         print("accent_color=> {}".format(bad_doc.id))
