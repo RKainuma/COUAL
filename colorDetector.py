@@ -73,6 +73,9 @@ class Color:
     @classmethod
     def detect_warning_color(cls):
         # 分割された画像にbase colorが含まれているかチェックする
+        print("①")
+        ColorSchemeStorage.storage_keys_to_analyze_color()
+        print("②")
         for each in ColorSchemeStorage.storage_keys_to_analyze_color():
             expandBaseColorArray = each['expand_base_color']
             ex_img = None
