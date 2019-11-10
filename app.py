@@ -26,8 +26,6 @@ QUARITY = 90
 ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
 
 print("Python Version is {}".format(sys.version))
-print("Loading setups......")
-ColorSchemeStorage.get_keys_to_analyze_color()
 
 
 @auth.get_password
@@ -45,6 +43,8 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
+    print("Loading setups......")
+    ColorSchemeStorage.get_keys_to_analyze_color()
     return render_template('index.html')
 
 
@@ -115,4 +115,4 @@ def post_colors():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)
