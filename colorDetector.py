@@ -91,7 +91,7 @@ class Color:
 
             #negative colorの存在チェック
             for e in each['neg_pattern_lst'] :
-                prrint(e[0])
+                print(e[0])
                 n_ex_img = cv2.inRange(cls.hsv, e[0], e[1])
                 n_contours,n_hierarchy = cv2.findContours(n_ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
                 negative_areas = np.array(list(map(cv2.contourArea, n_contours)))
