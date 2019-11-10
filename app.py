@@ -34,8 +34,8 @@ def get_pw(username):
     return None
 
 def starter_setups():
+    print("Python Version is {}".format(sys.version))
     print("Loading setups......")
-    ColorSchemeStorage.get_keys_to_analyze_color()
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -43,7 +43,7 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    print(sys.version)
+    ColorSchemeStorage.get_keys_to_analyze_color()
     return render_template('index.html')
 
 @app.route('/send', methods=['GET', 'POST'])
