@@ -1,1 +1,1 @@
-web: gunicorn -b 0.0.0.0:$PORT app:app --timeout 1000 --log-level=DEBUG
+web: gunicorn -b 0.0.0.0:$PORT app:app --timeout 120
