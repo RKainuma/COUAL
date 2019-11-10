@@ -44,7 +44,7 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     print("Loading setups......")
-    ColorSchemeStorage.get_keys_to_analyze_color()
+    # ColorSchemeStorage.get_keys_to_analyze_color()
     return render_template('index.html')
 
 
