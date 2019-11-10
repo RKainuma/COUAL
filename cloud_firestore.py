@@ -152,6 +152,7 @@ class ColorSchemeStorage:
     @classmethod
     def storage_keys_to_analyze_color(cls):
         """get_keys_to_analyze_color()で毎回Cloud-Firestoreにアクセスするのは時間がかかるので、取得した値をクラス変数として常にアクセスできる状態で生成"""
+        print("ストレージは呼ばれた")
         return cls.keys_to_analyze_color_lst
 
 
