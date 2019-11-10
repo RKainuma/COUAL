@@ -33,6 +33,7 @@ def get_pw(username):
     return None
 
 def starter_setups():
+    print(sys.version)
     print("Loading setups......")
     ColorSchemeStorage.get_keys_to_analyze_color()
 
