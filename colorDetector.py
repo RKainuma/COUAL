@@ -84,13 +84,14 @@ class Color:
             
             contours,hierarchy = cv2.findContours(ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
             base_areas = np.array(list(map(cv2.contourArea, contours)))
-            
+            print("①")
             #base colorが存在しなければ後続の処理は実行しない
             if len(base_areas) == 0 or np.max(base_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
                 continue
 
             #negative colorの存在チェック
             for e in each['neg_pattern_lst'] :
+                print("②")
                 print(e[0])
                 n_ex_img = cv2.inRange(cls.hsv, e[0], e[1])
                 n_contours,n_hierarchy = cv2.findContours(n_ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
