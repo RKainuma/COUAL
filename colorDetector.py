@@ -75,7 +75,7 @@ class Color:
         print("⓪")
         # 分割された画像にbase colorが含まれているかチェックする
         for each in ColorSchemeStorage.storage_keys_to_analyze_color():
-            print(①)
+            print("①")
             print(each)
             expandBaseColorArray = each['expand_base_color']
             ex_img = None
