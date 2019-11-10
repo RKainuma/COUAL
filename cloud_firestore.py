@@ -96,6 +96,13 @@ def conver_hyphen_to_comma(hsv):
         return ret
 
 class ColorSchemeStorage:
+    """
+    DBから取得したベースカラーの検索キーを格納した配列を生成
+    配列1番目: ベースカラーの元の値
+    配列2番目: ベースカラーをHSV空間の領域指定した値
+    配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた場合に生成
+    """
+
     if os.path.exists(CLOUD_FIRESTORE_AUTH_PATH):
         cred = credentials.Certificate(CLOUD_FIRESTORE_AUTH_PATH) # ダウンロードした秘密鍵
         print("CLOUD_FIRESTORE_AUTH_PATH exists")
@@ -106,6 +113,29 @@ class ColorSchemeStorage:
     db = firestore.client()
     keys_to_analyze_color_lst = []
     neg_pattern_lst = []
+    print("①")
+    color_schemes_ref = cls.db.collection('color-schemes')
+    main_docs = color_schemes_ref.get()
+    cnt = 0
+    for main_doc in main_docs:
+        cnt += 1
+        expand_base_colors = format_hsv_numeric(main_doc.id)
+        neg_ref = color_schemes_ref.document(main_doc.id).collection('negative').get()
+        neg_pattern_lst = []
+        for neg_pattern in neg_ref:
+            format_neg_pattern = format_hsv_numeric(neg_pattern.id)
+            neg_pattern_lst.append(format_neg_pattern)
+
+        pos_ref = color_schemes_ref.document(main_doc.id).collection('positive').get()
+        pos_pattern_lst = []
+        for pos_pattern in pos_ref:
+            format_pos_pattern = format_hsv_numeric(pos_pattern.id)
+            pos_pattern_lst.append(format_pos_pattern)
+
+        format_base_color = conver_hyphen_to_comma(main_doc.id)
+        keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
+        cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
+    print("②")
 
     @classmethod
     def post_color_scheme(cls, base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color_name):
@@ -117,35 +147,35 @@ class ColorSchemeStorage:
             'accent-color': accent_color_name,
         })
 
-    @classmethod
-    def get_keys_to_analyze_color(cls):
-        """
-        DBから取得したベースカラーの検索キーを格納した配列を生成
-        配列1番目: ベースカラーの元の値
-        配列2番目: ベースカラーをHSV空間の領域指定した値
-        配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた場合に生成
-        """
-        color_schemes_ref = cls.db.collection('color-schemes')
-        main_docs = color_schemes_ref.get()
-        cnt = 0
-        for main_doc in main_docs:
-            cnt += 1
-            expand_base_colors = format_hsv_numeric(main_doc.id)
-            neg_ref = color_schemes_ref.document(main_doc.id).collection('negative').get()
-            neg_pattern_lst = []
-            for neg_pattern in neg_ref:
-                format_neg_pattern = format_hsv_numeric(neg_pattern.id)
-                neg_pattern_lst.append(format_neg_pattern)
+    # @classmethod
+    # def get_keys_to_analyze_color(cls):
+    #     """
+    #     DBから取得したベースカラーの検索キーを格納した配列を生成
+    #     配列1番目: ベースカラーの元の値
+    #     配列2番目: ベースカラーをHSV空間の領域指定した値
+    #     配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた場合に生成
+    #     """
+    #     color_schemes_ref = cls.db.collection('color-schemes')
+    #     main_docs = color_schemes_ref.get()
+    #     cnt = 0
+    #     for main_doc in main_docs:
+    #         cnt += 1
+    #         expand_base_colors = format_hsv_numeric(main_doc.id)
+    #         neg_ref = color_schemes_ref.document(main_doc.id).collection('negative').get()
+    #         neg_pattern_lst = []
+    #         for neg_pattern in neg_ref:
+    #             format_neg_pattern = format_hsv_numeric(neg_pattern.id)
+    #             neg_pattern_lst.append(format_neg_pattern)
 
-            pos_ref = color_schemes_ref.document(main_doc.id).collection('positive').get()
-            pos_pattern_lst = []
-            for pos_pattern in pos_ref:
-                format_pos_pattern = format_hsv_numeric(pos_pattern.id)
-                pos_pattern_lst.append(format_pos_pattern)
+    #         pos_ref = color_schemes_ref.document(main_doc.id).collection('positive').get()
+    #         pos_pattern_lst = []
+    #         for pos_pattern in pos_ref:
+    #             format_pos_pattern = format_hsv_numeric(pos_pattern.id)
+    #             pos_pattern_lst.append(format_pos_pattern)
 
-            format_base_color = conver_hyphen_to_comma(main_doc.id)
-            keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
-            cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
+    #         format_base_color = conver_hyphen_to_comma(main_doc.id)
+    #         keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
+    #         cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
 
 
     @classmethod
