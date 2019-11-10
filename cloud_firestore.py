@@ -114,7 +114,7 @@ class ColorSchemeStorage:
     keys_to_analyze_color_lst = []
     neg_pattern_lst = []
     print("①")
-    color_schemes_ref = cls.db.collection('color-schemes')
+    color_schemes_ref = db.collection('color-schemes')
     main_docs = color_schemes_ref.get()
     cnt = 0
     for main_doc in main_docs:
@@ -134,7 +134,7 @@ class ColorSchemeStorage:
 
         format_base_color = conver_hyphen_to_comma(main_doc.id)
         keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
-        cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
+        keys_to_analyze_color_lst.append(keys_to_analyze_color)
     print("②")
 
     @classmethod
