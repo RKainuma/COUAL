@@ -7,7 +7,7 @@ import time
 from werkzeug import secure_filename
 
 import cv2
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, jsonify
 from flask_httpauth import HTTPBasicAuth
 import numpy as np
 
@@ -54,26 +54,26 @@ def send():
             return ''' <p>ファイルを選択してください</p> ''' 
         else:
             return ''' <p>許可されていない拡張子です</p> '''
-
-        # Read image and adjust to OpenCV coverable data-type
-        read_file = img_file.stream.read()
-        bin_img = io.BytesIO(read_file)
-        np_img = np.asarray(bytearray(bin_img.read()), dtype=np.uint8)
-        dec_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+    
+    # Read image and adjust to OpenCV coverable data-type
+    read_file = img_file.stream.read()
+    bin_img = io.BytesIO(read_file)
+    np_img = np.asarray(bytearray(bin_img.read()), dtype=np.uint8)
+    dec_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
         
-        # Resize original-image
-        result, enc_img = cv2.imencode(".jpg", dec_img, ENCODE_PARAMS)
-        org_img = base64.b64encode(enc_img).decode("utf-8")
+    # Resize original-image
+    result, enc_img = cv2.imencode(".jpg", dec_img, ENCODE_PARAMS)
+    org_img = base64.b64encode(enc_img).decode("utf-8")
         
-        analyzed_img, detection_result = Color.analyse(dec_img)
+    analyzed_img, detection_result = Color.analyse(dec_img)
 
-        result, enc_img = cv2.imencode(".jpg", analyzed_img, ENCODE_PARAMS)
-        analyzed_img = base64.b64encode(enc_img).decode("utf-8")
+    result, enc_img = cv2.imencode(".jpg", analyzed_img, ENCODE_PARAMS)
+    analyzed_img = base64.b64encode(enc_img).decode("utf-8")
         
-        return render_template('index.html', original_img=org_img, result_img=analyzed_img, detection_result=detection_result)
-
-    else:
-        return redirect(url_for('index.html'))
+    return jsonify({
+        "original_img": org_img,
+        "analyzed_img": analyzed_img
+    })
 
 
 @app.route('/maintenance')

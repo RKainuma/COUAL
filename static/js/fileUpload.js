@@ -47,18 +47,24 @@ $(document).ready(function () {
 
     function drawCanvas(originalImgSrc, analyzedImgSrc) {
         var originalCanvas = document.getElementById("original")
-        var originalContext = originalCanvas.getContext('2d')
-        var originalImg = new Image();
-        originalImg.src = originalImgSrc;
-        originalImg.onload = function () {
-            originalContext.drawImage(originalImg, 0, 0, 200, 200);
-        }
+        //var originalContext = originalCanvas.getContext('2d')
+        //var originalImg = new Image();
+        originalCanvas.src = "data:image/jpeg;base64," + originalImgSrc;
+        // originalImg.onload = function () {
+        //     var w = $("#original").width() * 40 / 100;
+        //     var h = $("#original").height() * 40 / 100;
+        //     console.log(w);
+        //     console.log(h);
+        //     originalCanvas.drawImage(originalImg, 0, 0, w, h);
+        // }
         var analyzedCanvas = document.getElementById("analyzed")
-        var analyzedContext = analyzedCanvas.getContext('2d')
-        var analyzedImg = new Image();
-        analyzedImg.src = analyzedImgSrc;
-        analyzedImg.onload = function () {
-            analyzedContext.drawImage(analyzedImg, 0, 0, 200, 200);
-        }
+        // var analyzedContext = analyzedCanvas.getContext('2d')
+        // var analyzedImg = new Image();
+        analyzedCanvas.src = "data:image/jpeg;base64," + analyzedImgSrc;
+        // analyzedImg.onload = function () {
+        //     var w = $("#analyzed").width() * 35 / 100;
+        //     var h = $("#analyzed").height() * 35 / 100;
+        //     analyzedContext.drawImage(analyzedImg, 0, 0, w, h);
+        // }
     }
 });

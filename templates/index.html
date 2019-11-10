@@ -15,8 +15,8 @@
             </div>
         </div>
     </div>
-    <input type="submit" id="submit" value="解析">
 </form>
+<button type=" button" id="analyze" value="解析">解析</button>
 <!--<div id="color_editor">
     変更前の色<br>
     <span style="float: left;">
@@ -30,9 +30,8 @@
         <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
             アップロード画像
         </legend>
-        {% if original_img %}
-        <img src="data:image/png;base64, {{ original_img }}" style="width:90%;margin: 20px;">
-        {% endif %}
+        <!--<canvas id="original_can" style="width:90%;margin: 20px;"></canvas>-->
+        <img id="original" style="width:90%;margin: 20px;"></img>
     </fieldset>
 </div>
 <div id="analyzed_img_area">
@@ -40,9 +39,8 @@
         <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
             解析後画像
         </legend>
-        {% if result_img %}
-        <img src="data:image/png;base64, {{ result_img }}" style="width:90%;margin: 20px;"></canvas>
-        {% endif %}
+        <!--<canvas id="analyzed_can" style="width:90%;margin: 20px;"></canvas>-->
+        <img id="analyzed" style="width:90%;margin: 20px;"></img>
     </fieldset>
 </div>
 
