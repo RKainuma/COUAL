@@ -25,6 +25,10 @@ IMAGE_WIDTH = 500
 QUARITY = 90
 ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
 
+print("Python Version is {}".format(sys.version))
+print("Loading setups......")
+ColorSchemeStorage.get_keys_to_analyze_color()
+
 
 @auth.get_password
 def get_pw(username):
@@ -33,18 +37,16 @@ def get_pw(username):
         return admin.get(username)
     return None
 
-def starter_setups():
-    print("Python Version is {}".format(sys.version))
-    print("Loading setups......")
 
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+
 @app.route('/')
 def index():
-    ColorSchemeStorage.get_keys_to_analyze_color()
     return render_template('index.html')
+
 
 @app.route('/send', methods=['GET', 'POST'])
 def send():
@@ -113,5 +115,4 @@ def post_colors():
 
 
 if __name__ == '__main__':
-    starter_setups()
     app.run(host='0.0.0.0', port=5000, debug=True)

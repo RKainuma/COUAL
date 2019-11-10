@@ -147,31 +147,9 @@ class ColorSchemeStorage:
             keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
             cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
 
-        return cls.keys_to_analyze_color_lst
 
     @classmethod
     def storage_keys_to_analyze_color(cls):
         """get_keys_to_analyze_color()で毎回Cloud-Firestoreにアクセスするのは時間がかかるので、取得した値をクラス変数として常にアクセスできる状態で生成"""
-        print("ストレージは呼ばれた")
         print(cls.keys_to_analyze_color_lst)
         return cls.keys_to_analyze_color_lst
-
-
-# # メインコレクションから親ドキュメントを取得
-# colors_ref = db.collection('colors-scheme')
-# main_docs = colors_ref.get()
-
-# parent_docs = []
-# print("\n\n=======ドキュメント(base_color)========")
-# for main_doc in main_docs:
-#     parent_docs.append(main_doc.id)
-#     print(main_doc.id)
-
-
-# print("\n\n=======サブコレクション(negative)========")
-# for parent_doc in parent_docs:
-#     bad_ref = colors_ref.document(parent_doc).collection('negative')
-#     bad_docs = bad_ref.get()
-#     print("\nドキュメントのID(base_color): {} ".format(parent_doc))
-#     for bad_doc in bad_docs:
-#         print("accent_color=> {}".format(bad_doc.id))

@@ -72,12 +72,9 @@ class Color:
 
     @classmethod
     def detect_warning_color(cls):
-        print("⓪")
         # 分割された画像にbase colorが含まれているかチェックする
-        for each_basecol in ColorSchemeStorage.storage_keys_to_analyze_color():
-            print("①")
-            print(each_basecol)
-            expandBaseColorArray = each_basecol['expand_base_color']
+        for each in ColorSchemeStorage.storage_keys_to_analyze_color():
+            expandBaseColorArray = each['expand_base_color']
             ex_img = None
             # HSVの最小値・最大値を2つずつ保持する可能性があるため
             if len(expandBaseColorArray) == 2 :
@@ -87,15 +84,13 @@ class Color:
             
             contours,hierarchy = cv2.findContours(ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
             base_areas = np.array(list(map(cv2.contourArea, contours)))
-            print("②")
+            
             #base colorが存在しなければ後続の処理は実行しない
             if len(base_areas) == 0 or np.max(base_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
                 continue
 
             #negative colorの存在チェック
-            for e in each_basecol['neg_pattern_lst']:
-                print("③")
-                print(e[0])
+            for e in each['neg_pattern_lst']:
                 n_ex_img = cv2.inRange(cls.hsv, e[0], e[1])
                 n_contours,n_hierarchy = cv2.findContours(n_ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
                 negative_areas = np.array(list(map(cv2.contourArea, n_contours)))
@@ -103,7 +98,7 @@ class Color:
                 if len(negative_areas) == 0 or np.max(negative_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
                     continue
 
-                positive_color_hsv = each_basecol['pos_pattern_lst'][0][0]
+                positive_color_hsv = each['pos_pattern_lst'][0][0]
                 return True, hsv_to_bgr_tuple(positive_color_hsv[0], positive_color_hsv[1], positive_color_hsv[2])
 
         return False, None
