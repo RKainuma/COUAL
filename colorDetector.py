@@ -74,10 +74,10 @@ class Color:
     def detect_warning_color(cls):
         print("⓪")
         # 分割された画像にbase colorが含まれているかチェックする
-        for each in ColorSchemeStorage.storage_keys_to_analyze_color():
+        for each_basecol in ColorSchemeStorage.storage_keys_to_analyze_color():
             print("①")
-            print(each)
-            expandBaseColorArray = each['expand_base_color']
+            print(each_basecol)
+            expandBaseColorArray = each_basecol['expand_base_color']
             ex_img = None
             # HSVの最小値・最大値を2つずつ保持する可能性があるため
             if len(expandBaseColorArray) == 2 :
@@ -93,7 +93,7 @@ class Color:
                 continue
 
             #negative colorの存在チェック
-            for e in each['neg_pattern_lst']:
+            for e in each_basecol['neg_pattern_lst']:
                 print("③")
                 print(e[0])
                 n_ex_img = cv2.inRange(cls.hsv, e[0], e[1])
@@ -103,7 +103,7 @@ class Color:
                 if len(negative_areas) == 0 or np.max(negative_areas) / (cls.h*cls.w) < cls.AREA_RATION_THRESHOLD:
                     continue
 
-                positive_color_hsv = each['pos_pattern_lst'][0][0]
+                positive_color_hsv = each_basecol['pos_pattern_lst'][0][0]
                 return True, hsv_to_bgr_tuple(positive_color_hsv[0], positive_color_hsv[1], positive_color_hsv[2])
 
         return False, None
