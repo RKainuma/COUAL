@@ -2,10 +2,29 @@
 # -*- coding: utf-8 -*-
 import math
 import numpy as np
+import os
 import re
 
 import firebase_admin
 from firebase_admin import credentials, firestore
+
+CLOUD_FIRESTORE_AUTH_PATH = "./coual-cefec-firebase-adminsdk-uv5bf-38b2fb2901.json"
+
+if not os.path.exists(CLOUD_FIRESTORE_AUTH_PATH):
+    CLOUD_FIRESTORE_AUTH = {
+      "type": os.environ.get("ACCOUNT_TYPE"),
+      "project_id": os.environ.get("PROJECT_ID"),
+      "private_key_id": os.environ.get("PRIVATE_KEY_ID"),
+      "private_key": os.environ.get("PRIVATE_KEY").replace('\\n', '\n'),
+      "client_email": os.environ.get("CLIENT_EMAIL"),
+      "client_id": os.environ.get("CLIENT_ID"),
+      "auth_uri": os.environ.get("AUTH_URL"),
+      "token_uri": os.environ.get("TOKEN_URL"),
+      "auth_provider_x509_cert_url": os.environ.get("AUTH_PROVIDER_CERT_URL"),
+      "client_x509_cert_url": os.environ.get("CLIENT_CERT_URL")
+    }
+else:
+    pass
 
 
 def format_hsv_numeric(hsv):
@@ -77,11 +96,45 @@ def conver_hyphen_to_comma(hsv):
         return ret
 
 class ColorSchemeStorage:
-    cred = credentials.Certificate("./coual-cefec-firebase-adminsdk-uv5bf-38b2fb2901.json") # ダウンロードした秘密鍵
+    # CloudFirestoreの認証キー: 本番環境では環境変数、開発環境ではファイルを読み込む
+    if os.path.exists(CLOUD_FIRESTORE_AUTH_PATH):
+        cred = credentials.Certificate(CLOUD_FIRESTORE_AUTH_PATH)
+        print("CLOUD_FIRESTORE_AUTH_PATH exists")
+    else:
+        cred = credentials.Certificate(CLOUD_FIRESTORE_AUTH)
+        print("CLOUD_FIRESTORE_AUTH_PATH does not exists, Loaded ENVVAR on Heroku")
+
+    """
+    DBから取得したベースカラーの検索キーを格納した配列を生成
+    配列1番目: ベースカラーの元の値
+    配列2番目: ベースカラーをHSV空間の領域指定した値
+    配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた場合に生成
+    """
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     keys_to_analyze_color_lst = []
     neg_pattern_lst = []
+    color_schemes_ref = db.collection('color-schemes')
+    main_docs = color_schemes_ref.get()
+    cnt = 0
+    for main_doc in main_docs:
+        cnt += 1
+        expand_base_colors = format_hsv_numeric(main_doc.id)
+        neg_ref = color_schemes_ref.document(main_doc.id).collection('negative').get()
+        neg_pattern_lst = []
+        for neg_pattern in neg_ref:
+            format_neg_pattern = format_hsv_numeric(neg_pattern.id)
+            neg_pattern_lst.append(format_neg_pattern)
+
+        pos_ref = color_schemes_ref.document(main_doc.id).collection('positive').get()
+        pos_pattern_lst = []
+        for pos_pattern in pos_ref:
+            format_pos_pattern = format_hsv_numeric(pos_pattern.id)
+            pos_pattern_lst.append(format_pos_pattern)
+
+        format_base_color = conver_hyphen_to_comma(main_doc.id)
+        keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
+        keys_to_analyze_color_lst.append(keys_to_analyze_color)
 
     @classmethod
     def post_color_scheme(cls, base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color_name):
@@ -94,58 +147,6 @@ class ColorSchemeStorage:
         })
 
     @classmethod
-    def get_keys_to_analyze_color(cls):
-        """
-        DBから取得したベースカラーの検索キーを格納した配列を生成
-        配列1番目: ベースカラーの元の値
-        配列2番目: ベースカラーをHSV空間の領域指定した値
-        配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた場合に生成
-        """
-        color_schemes_ref = cls.db.collection('color-schemes')
-        main_docs = color_schemes_ref.get()
-        cnt = 0
-        for main_doc in main_docs:
-            cnt += 1
-            expand_base_colors = format_hsv_numeric(main_doc.id)
-            neg_ref = color_schemes_ref.document(main_doc.id).collection('negative').get()
-            neg_pattern_lst = []
-            for neg_pattern in neg_ref:
-                format_neg_pattern = format_hsv_numeric(neg_pattern.id)
-                neg_pattern_lst.append(format_neg_pattern)
-
-            pos_ref = color_schemes_ref.document(main_doc.id).collection('positive').get()
-            pos_pattern_lst = []
-            for pos_pattern in pos_ref:
-                format_pos_pattern = format_hsv_numeric(pos_pattern.id)
-                pos_pattern_lst.append(format_pos_pattern)
-
-            format_base_color = conver_hyphen_to_comma(main_doc.id)
-            keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
-            cls.keys_to_analyze_color_lst.append(keys_to_analyze_color)
-
-        return cls.keys_to_analyze_color_lst
-
-    @classmethod
     def storage_keys_to_analyze_color(cls):
         """get_keys_to_analyze_color()で毎回Cloud-Firestoreにアクセスするのは時間がかかるので、取得した値をクラス変数として常にアクセスできる状態で生成"""
         return cls.keys_to_analyze_color_lst
-
-
-# # メインコレクションから親ドキュメントを取得
-# colors_ref = db.collection('colors-scheme')
-# main_docs = colors_ref.get()
-
-# parent_docs = []
-# print("\n\n=======ドキュメント(base_color)========")
-# for main_doc in main_docs:
-#     parent_docs.append(main_doc.id)
-#     print(main_doc.id)
-
-
-# print("\n\n=======サブコレクション(negative)========")
-# for parent_doc in parent_docs:
-#     bad_ref = colors_ref.document(parent_doc).collection('negative')
-#     bad_docs = bad_ref.get()
-#     print("\nドキュメントのID(base_color): {} ".format(parent_doc))
-#     for bad_doc in bad_docs:
-#         print("accent_color=> {}".format(bad_doc.id))

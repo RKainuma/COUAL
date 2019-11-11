@@ -3,6 +3,7 @@
 import base64
 import io
 import os
+import sys
 import time
 
 import cv2
@@ -20,6 +21,8 @@ admin = {"admin": "admin"}
 QUARITY = 90
 ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
 
+print("Python Version is {}".format(sys.version))
+
 
 @auth.get_password
 def get_pw(username):
@@ -28,12 +31,18 @@ def get_pw(username):
         return admin.get(username)
     return None
 
-def starter_setups():
-    ColorSchemeStorage.get_keys_to_analyze_color()
+  
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+  
 @app.route('/')
 def index():
+    print("Loading setups......")
+    # ColorSchemeStorage.get_keys_to_analyze_color()
     return render_template('index.html')
+
 
 @app.route('/send', methods=['GET', 'POST'])
 def send():
@@ -55,12 +64,13 @@ def send():
     result, enc_img = cv2.imencode(".jpg", analyzed_img, ENCODE_PARAMS)
     analyzed_img = base64.b64encode(enc_img).decode("utf-8")
         
+
     return jsonify({
         "original_img": org_img,
         "analyzed_img": analyzed_img
     })
 
-
+  
 @app.route('/maintenance')
 @auth.login_required
 def maintenance(): 
@@ -95,5 +105,4 @@ def post_colors():
 
 
 if __name__ == '__main__':
-    starter_setups()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)
