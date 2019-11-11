@@ -2,6 +2,16 @@
 
 $(document).ready(function () {
     $("#analyze").click(function () {
+        if (fileInput.files.length <= 0) {
+            alert("画像を選択してください。");
+            return;
+        }
+        console.log(fileInput.value.toUpperCase().indexOf('PNG'));
+        console.log(fileInput.value.toUpperCase().indexOf('JPG'));
+        if ((fileInput.value.toUpperCase().indexOf('PNG') == -1) && (fileInput.value.toUpperCase().indexOf('JPG') == -1)) {
+            alert('添付ファイルの形式（拡張子）が違います。');
+            return;
+        }
         var params = new FormData();
         var file = document.getElementById("fileInput").files[0]
         var instance = axios.create({

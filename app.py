@@ -4,7 +4,6 @@ import base64
 import io
 import os
 import time
-from werkzeug import secure_filename
 
 import cv2
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, jsonify
@@ -18,9 +17,6 @@ app = Flask(__name__)
 auth = HTTPBasicAuth()
 
 admin = {"admin": "admin"}
-UPLOAD_FOLDER = './uploads'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'PNG', 'JPG'])
-IMAGE_WIDTH = 500
 QUARITY = 90
 ENCODE_PARAMS = [int(cv2.IMWRITE_JPEG_QUALITY), QUARITY]
 
@@ -35,25 +31,14 @@ def get_pw(username):
 def starter_setups():
     ColorSchemeStorage.get_keys_to_analyze_color()
 
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/send', methods=['GET', 'POST'])
 def send():
-    if request.method == 'POST':
-        img_file = request.files['img_file']
-        # 変なファイル弾き
-        if img_file and allowed_file(img_file.filename): 
-            filename = secure_filename(img_file.filename)
-        elif img_file.filename is '':
-            return ''' <p>ファイルを選択してください</p> ''' 
-        else:
-            return ''' <p>許可されていない拡張子です</p> '''
+    img_file = request.files['img_file']
+
     
     # Read image and adjust to OpenCV coverable data-type
     read_file = img_file.stream.read()
