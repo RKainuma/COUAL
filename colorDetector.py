@@ -10,7 +10,6 @@ from subtractive_color import execute
 from cloud_firestore import ColorSchemeStorage
 
 class Color: 
-
     AREA_RATION_THRESHOLD = 0.01
     h = None
     s = None
@@ -59,7 +58,7 @@ class Color:
                 sliced_imgs.append(v_img)
         sliced_imgs = np.array(sliced_imgs)
         return vertical_divisions, horizontal_divisions, sliced_imgs, message
-    
+
     @classmethod
     def merge_image(cls, vertical_divisions, horizontal_divisions, sliced_imgs):
         marge_vsize, marge_hsize, ch = sliced_imgs.shape[1:]
@@ -81,7 +80,7 @@ class Color:
                 ex_img = cv2.inRange(cls.hsv, expandBaseColorArray[0], expandBaseColorArray[1])
             else:
                 ex_img = cv2.inRange(cls.hsv, expandBaseColorArray[0], expandBaseColorArray[1]) + cv2.inRange(cls.hsv, expandBaseColorArray[2], expandBaseColorArray[3])
-            
+
             contours,hierarchy = cv2.findContours(ex_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
             base_areas = np.array(list(map(cv2.contourArea, contours)))
             
@@ -102,8 +101,7 @@ class Color:
                 return True, hsv_to_bgr_tuple(positive_color_hsv[0], positive_color_hsv[1], positive_color_hsv[2])
 
         return False, None
-    
+
     @classmethod
     def generate_message(cls):
         return 'HSV[' + ','.join(map(str, cls.hsv_min2_array)) + '~' + ','.join(map(str, cls.hsv_max1_array)) + ']の色が含まれています。'
-
