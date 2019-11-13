@@ -87,38 +87,38 @@ def format_hsv_numeric(hsv):
 
 
 def conver_hyphen_to_comma(hsv):
-        hsv = re.findall(r'\d+', hsv)
-        h = int(hsv[0])
-        s = int(hsv[1])
-        v = int(hsv[2])
-        ret = np.array([h, s, v])
+    """CloudFirestoreから取得したSting型のHSVをリストにフォーマットする"""
+    hsv = re.findall(r'\d+', hsv)
+    h = int(hsv[0])
+    s = int(hsv[1])
+    v = int(hsv[2])
+    ret = np.array([h, s, v])
 
-        return ret
+    return ret
 
 class ColorSchemeStorage:
+    """
+    DBから取得したベースカラーの検索キーを格納したリストを生成
+    リスト1番目(base_color): ベースカラーの元の値
+    リスト2番目(expand_base_color): 検索キーとなるHSV空間の最小値-最大値を領域指定したリストを格納
+    リスト3番目(neg_pattern_lst): ネガティブな配色パターンを最小値-最大値を領域指定したリストを格納
+    リスト4番目(pos_pattern_lst): ポジティブな配色パターンを最小値-最大値を領域指定したリストを格納
+    """
     # CloudFirestoreの認証キー: 本番環境では環境変数、開発環境ではファイルを読み込む
     if os.path.exists(CLOUD_FIRESTORE_AUTH_PATH):
         cred = credentials.Certificate(CLOUD_FIRESTORE_AUTH_PATH)
-        print("CLOUD_FIRESTORE_AUTH_PATH exists")
+        print("CLOUD_FIRESTORE_AUTH_PATH exists, loading CloudFirestore.........")
     else:
         cred = credentials.Certificate(CLOUD_FIRESTORE_AUTH)
-        print("CLOUD_FIRESTORE_AUTH_PATH does not exists, Loaded ENVVAR on Heroku")
+        print("CLOUD_FIRESTORE_AUTH aquired by ENVVAR on Heroku, loading CloudFirestore.........")
 
-    """
-    DBから取得したベースカラーの検索キーを格納した配列を生成
-    配列1番目: ベースカラーの元の値
-    配列2番目: ベースカラーをHSV空間の領域指定した値
-    配列3番目: ベースカラーをHSV空間の領域指定した値で2番目の配列で格納したHueの値が359を超えた場合に生成
-    """
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     keys_to_analyze_color_lst = []
     neg_pattern_lst = []
     color_schemes_ref = db.collection('color-schemes')
     main_docs = color_schemes_ref.get()
-    cnt = 0
     for main_doc in main_docs:
-        cnt += 1
         expand_base_colors = format_hsv_numeric(main_doc.id)
         neg_ref = color_schemes_ref.document(main_doc.id).collection('negative').get()
         neg_pattern_lst = []
@@ -135,6 +135,7 @@ class ColorSchemeStorage:
         format_base_color = conver_hyphen_to_comma(main_doc.id)
         keys_to_analyze_color = {"base_color":format_base_color, "expand_base_color":expand_base_colors, "neg_pattern_lst": neg_pattern_lst, "pos_pattern_lst": pos_pattern_lst}
         keys_to_analyze_color_lst.append(keys_to_analyze_color)
+    print("loading CloudFirestore completed")
 
     @classmethod
     def post_color_scheme(cls, base_hsv, base_color_name, pattern_stat, accent_hsv, accent_color_name):

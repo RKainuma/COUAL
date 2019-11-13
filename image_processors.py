@@ -5,12 +5,9 @@ import numpy as np
 
 def rgb_to_hsv(img):
     """
-    [Desc]Converting images from RGB to HSV
-    [args]numpy decoded image
+    BGRの画像データを取得し、HSVの画像データに変換する
     """
-
     ret = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
     return ret
 
 def hsv_to_bgr_tuple(h, s, v):

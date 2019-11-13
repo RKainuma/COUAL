@@ -1,5 +1,6 @@
 'use strict';
 
+// ネガティブパターン
 $(function(){
     $("#neg-color-plus-btn").on("click", function(){
         let num_of_colors = $(this).attr('data-num');
@@ -23,6 +24,8 @@ $(function(){
     });
 });
 
+
+// ポジティブパターン
 $(function(){
     $("#pos-color-plus-btn").on("click", function(){
         let num_of_colors = $(this).attr('data-num');
