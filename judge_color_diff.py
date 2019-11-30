@@ -6,18 +6,18 @@ import numpy as np
 
 
 def RGB2XYZ(inputRGB):
-    # RGB表色系をXYZ表色の単位系に変換
+    # RGB表色系をXYZ表色の単位に変換
     converted_RGB = []
     for elm in inputRGB:
         elm =elm / 255
-   
+
         if elm > 0.04045:
             elm = np.power((elm + 0.055) / 1.055, 2.4)
         else:
             elm = elm / 12.92
         converted_RGB.append(elm)
 
-    RGB2XYZ_conversion_factor = np.array([[0.4124, 0.3576, 0.1805], [0.2126, 0.7152, 0.0722], [0.0193, 0.1192, 0.9505]]) # RGB表色系をXYZ表色系変換する係数
+    RGB2XYZ_conversion_factor = np.array([[0.4124, 0.3576, 0.1805], [0.2126, 0.7152, 0.0722], [0.0193, 0.1192, 0.9505]]) # RGB表色系からXYZ表色系への変換係数
     converted_RGB = np.array(converted_RGB)
     calucedXYZ = np.dot(RGB2XYZ_conversion_factor, converted_RGB)
     outputXYZ = np.dot(calucedXYZ, 100)
@@ -26,18 +26,17 @@ def RGB2XYZ(inputRGB):
 
 
 def XYZ2LMS(inputXYZ):
-    XYZ2LMS_conversion_factor = np.array([[0.15516, 0.54307, -0.03701], [-0.15516, 0.45692, 0.02969], [0, 0, 0.00732]]) # XYZ表色系をLMS値に変換する係数
+    XYZ2LMS_conversion_factor = np.array([[0.15516, 0.54307, -0.03701], [-0.15516, 0.45692, 0.02969], [0, 0, 0.00732]]) # XYZ表色系からLMS値への変換係数
     outputLMS = np.dot(XYZ2LMS_conversion_factor, inputXYZ)
 
     return outputLMS
 
 
-# 二色型色覚が見ているMS平面,LS平面,LM平面に投影するための係数を算出するメソッド
+# 二色型色覚が見ているMS平面,LS平面,LM平面に投影するための係数を算出
 def culcDichromatCoefficient(whiteLMS,dichromatLMS):
     elm1 = whiteLMS[1] * dichromatLMS[2] - whiteLMS[2] * dichromatLMS[1]
     elm2 = whiteLMS[2] * dichromatLMS[0] - whiteLMS[0] * dichromatLMS[2]
     elm3 = whiteLMS[0] * dichromatLMS[1] - whiteLMS[1] * dichromatLMS[0]
-
     ret = np.array([elm1, elm2, elm3])
 
     return ret
@@ -45,16 +44,16 @@ def culcDichromatCoefficient(whiteLMS,dichromatLMS):
 
 def LMS4protan(inputLMS):
     whiteXYZ = np.array([0.333, 0.333, 0.333])  #XYZ表色系における白色エネルギー
-    whiteLMS = XYZ2LMS(whiteXYZ)  #白色のLMS値を光エネルギーの傾き判定の基準とする
-    tangent_inputLMS = inputLMS[2]/inputLMS[1]  # ProtanはLMS空間のL軸情報が喪失するのでMS平面に投影
-    tangent_whiteLMS = whiteLMS[2]/whiteLMS[1]  # 入力LMSと比較する白色LMS値の傾き
+    whiteLMS = XYZ2LMS(whiteXYZ)  # 白色のLMS値を光エネルギーの傾き判定の基準とする
+    tangent_inputLMS = inputLMS[2]/inputLMS[1]  # ProtanはL軸情報が喪失するのでMS平面に投影
+    tangent_whiteLMS = whiteLMS[2]/whiteLMS[1]  # 入力LMSと白色LMS値の傾き
 
-    XYZ575nm = np.array([0.8425, 0.9154, 0.0018]) # 波長575nmのXYZ表色系定義
-    XYZ475nm = np.array([0.1421, 0.1126, 1.0419]) # 波長475nmのXYZ表色系定義
+    XYZ575nm = np.array([0.8425, 0.9154, 0.0018]) # 波長575nmのXYZ表色系
+    XYZ475nm = np.array([0.1421, 0.1126, 1.0419]) # 波長475nmのXYZ表色系
     if tangent_inputLMS < tangent_whiteLMS:
-        dichromatLMS = XYZ2LMS(XYZ575nm)  # 白色よりも波長が大きい時
+        dichromatLMS = XYZ2LMS(XYZ575nm)  # 白色よりも波長が大きい
     else:
-        dichromatLMS = XYZ2LMS(XYZ475nm)  # 白色よりも波長が小さい時
+        dichromatLMS = XYZ2LMS(XYZ475nm)  # 白色よりも波長が小さい
 
     DichromatCoefficient = culcDichromatCoefficient(whiteLMS, dichromatLMS)
 
@@ -67,23 +66,25 @@ def LMS4protan(inputLMS):
 
 def LMS4deutan(inputLMS):
     whiteXYZ = np.array([0.333, 0.333, 0.333])  #XYZ表色系における白色エネルギー
-    whiteLMS = XYZ2LMS(whiteXYZ)  #白色のLMS値を光エネルギーの傾き判定の基準とする
+    whiteLMS = XYZ2LMS(whiteXYZ)  # 白色のLMS値を光エネルギーの傾き判定の基準とする
     tangent_inputLMS = inputLMS[2]/inputLMS[0]  # ProtanはLMS空間のM軸情報が喪失するのでLS平面に投影
-    tangent_whiteLMS = whiteLMS[2]/whiteLMS[0]  # 入力LMSと比較する白色LMS値の傾き
+    tangent_whiteLMS = whiteLMS[2]/whiteLMS[0]  # 入力LMSと白色LMS値の傾き
 
-    XYZ575nm = np.array([0.8425, 0.9154, 0.0018]) # 波長575nmのXYZ表色系定義
-    XYZ475nm = np.array([0.1421, 0.1126, 1.0419]) # 波長475nmのXYZ表色系定義
+    XYZ575nm = np.array([0.8425, 0.9154, 0.0018]) # 波長575nmのXYZ表色系
+    XYZ475nm = np.array([0.1421, 0.1126, 1.0419]) # 波長475nmのXYZ表色系
     if tangent_inputLMS < tangent_whiteLMS:
-        dichromatLMS = XYZ2LMS(XYZ575nm)  # 白色よりも波長が大きい時
+        dichromatLMS = XYZ2LMS(XYZ575nm)  # 白色よりも波長が大きい
     else:
-        dichromatLMS = XYZ2LMS(XYZ475nm)  # 白色よりも波長が小さい時
+        dichromatLMS = XYZ2LMS(XYZ475nm)  # 白色よりも波長が小さい
 
     DichromatCoefficient = culcDichromatCoefficient(whiteLMS, dichromatLMS)
 
+    # deutan変換の場合はM軸に沿って投影させる
     deutanM = (DichromatCoefficient[0] * inputLMS[0] + DichromatCoefficient[2] * inputLMS[2]) / DichromatCoefficient[1] * -1
     deutanLMS = np.array([inputLMS[0], deutanM, inputLMS[2]])
 
     return deutanLMS
+
 
 def LMS2XYZ(inputLMS):
     LMS2XYZ_conversion_factor = np.linalg.inv(np.array([[0.15516, 0.54307, -0.03701], [-0.15516, 0.45692, 0.02969], [0, 0, 0.00732]])) # XYZ表色系をLMS値に変換する係数の逆行列
@@ -91,8 +92,10 @@ def LMS2XYZ(inputLMS):
 
     return outputXYZ
 
+
 def XYZ4Lab(inputXYZ):
     whiteXYZd50 = np.array([96.42, 100.0, 82.49])  # D50における白色点のXYZ値(Xn, Yn, Zn)
+
     # LabのL成分の計算
     L = 0
     th = 0.008856
@@ -189,33 +192,33 @@ def CIEDE2000(Lab1, Lab2, kL=1, kC=1, kH=1):
 
 
 def judge_color_diff(Lab1, Lab2):
-    # JISに基づき、色差の判定
-    THRESHOLD_NON_COLORIMETRY_AREA = 0.2  # 特別に調整された測色器械でも誤差の範囲にあり、人では識別不能
-    THRESHOLD_IDENTIFICATION_COLOR_DIFFERENCE = 0.3  # 十分に調整された測色器械の再現精度の範囲で、訓練を積んだ人が再現性を持って識別できる限界
-    THRESHOLD_AAA = 0.4  # 目視判定の再現性からみて、厳格な許容色差の規格を設定できる限界
-    THRESHOLD_AA = 0.8  # 色の隣接比較で、わずかに色差が感じられるレベル。一般の測色器械間の誤差を含む許容色差の範囲 
-    THRESHOLD_A = 1.6  # 色の離間比較では、ほとんど気付かれない色差レベル。一般的には同じ色だと思われているレベル
-    THRESHOLD_B = 3.2  # 印象レベルでは同じ色として扱える範囲。塗料業界やプラスチック業界では色違いでクレームになることがある
-    THRESHOLD_C = 6.5  # ＪＩＳ標準色票、マンセル色票等の１歩度に相当する色差
-    THRESHOLD_D = 13.0  # 細分化された系統色名で区別ができる程度の色の差で、この程度を超えると別の色名のイメージになる
+    # JISに基づいた色差の判定
+    TH_NON_COLORIMETRY_AREA = 0.2  # 特別に調整された測色器械でも誤差の範囲にあり、人では識別不能
+    TH_IDENTIFICATION_COLOR_DIFFERENCE = 0.3  # 十分に調整された測色器械の再現精度の範囲で、訓練を積んだ人が再現性を持って識別できる限界
+    TH_AAA = 0.4  # 目視判定の再現性からみて、厳格な許容色差の規格を設定できる限界
+    TH_AA = 0.8  # 色の隣接比較で、わずかに色差が感じられるレベル。一般の測色器械間の誤差を含む許容色差の範囲 
+    TH_A = 1.6  # 色の離間比較では、ほとんど気付かれない色差レベル。一般的には同じ色だと思われているレベル
+    TH_B = 3.2  # 印象レベルでは同じ色として扱える範囲。塗料業界やプラスチック業界では色違いでクレームになることがある
+    TH_C = 6.5  # ＪＩＳ標準色票、マンセル色票等の１歩度に相当する色差
+    TH_D = 13.0  # 細分化された系統色名で区別ができる程度の色の差で、この程度を超えると別の色名のイメージになる
     THRESHOLD_OTHER_COLOR = 25.0  # 完全に別の色
 
     color_diff = CIEDE2000(Lab1, Lab2)
-    if color_diff <= THRESHOLD_NON_COLORIMETRY_AREA:
+    if color_diff <= TH_NON_COLORIMETRY_AREA:
         result_msg = "評価不能領域"
-    elif color_diff <= THRESHOLD_IDENTIFICATION_COLOR_DIFFERENCE:
+    elif color_diff <= TH_IDENTIFICATION_COLOR_DIFFERENCE:
         result_msg = "識別限界"
-    elif color_diff <= THRESHOLD_AAA:
+    elif color_diff <= TH_AAA:
         result_msg = "AAA級許容差"
-    elif color_diff <= THRESHOLD_AA:
+    elif color_diff <= TH_AA:
         result_msg = "AA級許容差"
-    elif color_diff <= THRESHOLD_A:
+    elif color_diff <= TH_A:
         result_msg = "A級許容差"
-    elif color_diff <= THRESHOLD_B:
+    elif color_diff <= TH_B:
         result_msg = "B級許容差"
-    elif color_diff <= THRESHOLD_C:
+    elif color_diff <= TH_C:
         result_msg = "C級許容差"
-    elif color_diff <= THRESHOLD_D:
+    elif color_diff <= TH_D:
         result_msg = "D級許容差"
     else:
         result_msg = "別の色"
