@@ -200,7 +200,6 @@ def judge_color_diff(Lab1, Lab2):
     THRESHOLD_OTHER_COLOR = 25.0  # 完全に別の色
 
     color_diff = CIEDE2000(Lab1, Lab2)
-
     if color_diff <= THRESHOLD_NON_COLORIMETRY_AREA:
         result_msg = "評価不能領域"
     elif color_diff <= THRESHOLD_IDENTIFICATION_COLOR_DIFFERENCE:
@@ -220,7 +219,7 @@ def judge_color_diff(Lab1, Lab2):
     else:
         result_msg = "別の色"
 
-    return result_msg
+    return result_msg, color_diff
 
 
 def calc_commonLab(inputRGB):
@@ -252,12 +251,12 @@ def calc_deutanLab(inputRGB):
 
 
 if __name__ == '__main__':
-    RGB1 = (250, 250, 250)
+    RGB1 = (57, 100, 100)
     commonLab1 = calc_commonLab(RGB1)
     protanLab1 = calc_protanLab(RGB1)
     deutanLab1 = calc_deutanLab(RGB1)
 
-    RGB2 = (110, 220, 11)
+    RGB2 = (60, 50, 100)
     commonLab2 = calc_commonLab(RGB2)
     protanLab2 = calc_protanLab(RGB2)
     deutanLab2 = calc_deutanLab(RGB2)
@@ -266,6 +265,6 @@ if __name__ == '__main__':
     result_protan = judge_color_diff(protanLab1, protanLab2)
     result_deutan = judge_color_diff(deutanLab1, deutanLab2)
 
-    print("C型の色差判定: {}".format(result_common))
-    print("P型の色差判定: {}".format(result_protan))
-    print("D型の色差判定: {}".format(result_deutan))
+    print("\n\033[34m C型の色差判定: {} / SCORE: {} \033[0m".format(result_common[0], result_common[1]))
+    print("\033[31m P型の色差判定: {} / SCORE: {} \033[0m".format(result_protan[0], result_protan[1]))
+    print("\033[32m D型の色差判定: {} / SCORE: {} \033[0m\n".format(result_deutan[0], result_deutan[1]))
