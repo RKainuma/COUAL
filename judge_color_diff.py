@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import argparse
 import cv2
 import numpy as np
 
@@ -251,12 +252,18 @@ def calc_deutanLab(inputRGB):
 
 
 if __name__ == '__main__':
-    RGB1 = (57, 100, 100)
+    parser = argparse.ArgumentParser(description='入力された２つのRGB値から色覚タイプごとの色差判定を行う')
+    parser.add_argument('rgb1', help='比較するRGB1')
+    parser.add_argument('rgb2', help='比較するRGB2')
+    args = parser.parse_args()
+
+    RGB1 = tuple(map(lambda x: int(x), args.rgb1.split(",")))
+    RGB2 = tuple(map(lambda x: int(x), args.rgb2.split(",")))
+
     commonLab1 = calc_commonLab(RGB1)
     protanLab1 = calc_protanLab(RGB1)
     deutanLab1 = calc_deutanLab(RGB1)
 
-    RGB2 = (60, 50, 100)
     commonLab2 = calc_commonLab(RGB2)
     protanLab2 = calc_protanLab(RGB2)
     deutanLab2 = calc_deutanLab(RGB2)
@@ -265,6 +272,7 @@ if __name__ == '__main__':
     result_protan = judge_color_diff(protanLab1, protanLab2)
     result_deutan = judge_color_diff(deutanLab1, deutanLab2)
 
-    print("\n\033[34m C型の色差判定: {} / SCORE: {} \033[0m".format(result_common[0], result_common[1]))
+    print("\n\033[4m RGB1: {} / RGB2: {} \033[0m".format(RGB1, RGB2))
+    print("\033[34m C型の色差判定: {} / SCORE: {} \033[0m".format(result_common[0], result_common[1]))
     print("\033[31m P型の色差判定: {} / SCORE: {} \033[0m".format(result_protan[0], result_protan[1]))
     print("\033[32m D型の色差判定: {} / SCORE: {} \033[0m\n".format(result_deutan[0], result_deutan[1]))
