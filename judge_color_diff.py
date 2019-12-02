@@ -3,6 +3,7 @@
 import argparse
 import cv2
 import numpy as np
+import sys
 
 
 def RGB2XYZ(inputRGB):
@@ -260,8 +261,18 @@ if __name__ == '__main__':
     parser.add_argument('rgb2', help='比較するRGB2')
     args = parser.parse_args()
 
-    RGB1 = tuple(map(lambda x: int(x), args.rgb1.split(",")))
-    RGB2 = tuple(map(lambda x: int(x), args.rgb2.split(",")))
+    try:
+        RGB1 = tuple(map(lambda x: int(x), args.rgb1.split("-")))
+    except ValueError:
+        print("\033[35m use \"-\" to split for RGB1 \033[0m")
+        sys.exit()
+
+    try:
+        RGB2 = tuple(map(lambda x: int(x), args.rgb2.split("-")))
+    except ValueError:
+        print("\033[35m use \"-\" to split for RGB2\033[0m")
+        sys.exit()
+
 
     commonLab1 = calc_commonLab(RGB1)
     protanLab1 = calc_protanLab(RGB1)
