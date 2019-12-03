@@ -109,3 +109,23 @@ div.drag-drop-inside {
   float: left;
   margin-left: 10px;
 }
+
+#loading {
+  display: table;
+  width: 20%;
+  height: 20%;
+  position: fixed;
+  top: 40%;
+  left: 40%;
+  background-color: #fff;
+  opacity: 0.8;
+  border: double 4px #333;
+}
+
+#loading .loadingMsg {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  padding-top: 140px;
+  background: url("../images/loading.gif") center center no-repeat;
+}
