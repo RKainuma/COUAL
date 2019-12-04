@@ -129,3 +129,12 @@ div.drag-drop-inside {
   padding-top: 140px;
   background: url("../images/loading.gif") center center no-repeat;
 }
+
+.Style1 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 2px;
+  height: 2px;
+  font-size: 1px;
+}
