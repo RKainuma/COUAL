@@ -3,6 +3,9 @@
 
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <meta http-equiv="Content-Script-Type" content="text/javascript">
   <title>COUAL</title>
   <link rel="shortcut icon" href="static/images/favicon.ico" type="image/vnd.microsoft.icon">
   <link rel="stylesheet" href="static/styles/main.css" />
@@ -14,12 +17,91 @@
   <script type="text/javascript" src="static/js/fileUpload.js"></script>
   <script type="text/javascript" src="static/js/maintenance.js"></script>
   <script type="text/javascript" src="static/js/draw_line.js"></script>
+  <script language="JavaScript">
+    var Col = "lightgreen"; //十字カーソルの色
+    var winx, winy;
+    var sFlag = false;
+    var my = 0;
+    var mx = 0;
+
+    function Init() {
+      winx = GetWindowSize("width");
+      winy = GetWindowSize("height");
+      document.getElementById("iLud").style.backgroundColor = Col;
+      document.getElementById("iLud").style.top = my;
+      $("#iLud").height(winy);
+      document.getElementById("iLlr").style.backgroundColor = Col;
+      document.getElementById("iLlr").style.left = mx;
+      $("#iLlr").width(winx);
+      sFlag = true;
+      $("#original").mousemove(function (e) {
+        mx = e.pageX;
+        my = e.pageY;
+        if (mx < 0) mx = 0;
+        if (mx >= winx) mx = winx - 1;
+        if (my < 0) my = 0;
+        if (my >= winy) my = winy - 1;
+        if (sFlag) originalMain();
+      });
+      $("#analyzed").mousemove(function (e) {
+        mx = e.pageX;
+        my = e.pageY;
+        if (mx < 0) mx = 0;
+        if (mx >= winx) mx = winx - 1;
+        if (my < 0) my = 0;
+        if (my >= winy) my = winy - 1;
+        var ele = this;
+        if (sFlag) analyzedMain();
+      });
+    }
+
+    function originalMain() {
+      $('#iLud').offset({
+        left: mx,
+        top: $("#original").offset().top
+      });
+      $('#iLlr').offset({
+        left: $("#original").offset().left,
+        top: my
+      });
+      $('#iLud').height($("#original").height());
+      $('#iLlr').width($("#original").width());
+    }
+
+    function analyzedMain() {
+      $('#iLud').offset({
+        left: mx,
+        top: $("#analyzed").offset().top
+      });
+      $('#iLlr').offset({
+        left: $("#analyzed").offset().left,
+        top: my
+      });
+      $('#iLud').height($("#analyzed").height());
+      $('#iLlr').width($("#analyzed").width());
+    }
+
+    //ウインドウサイズ取得
+    function GetWindowSize(type) {
+      switch (type) {
+        case "width":
+          return (innerWidth);
+        case "height":
+          return (innerHeight);
+        default:
+          return (-1);
+      }
+    }
+  </script>
+
 </head>
 
-<body style="background-color: #282828;">
+<body style="background-color: #282828;" onload="Init()">
   <main>
     {% block body %}{% endblock %}
   </main>
+  <div class="Style1" id="iLud"></div>
+  <div class="Style1" id="iLlr"></div>
 </body>
 
 </html>
