@@ -44,9 +44,50 @@ def index():
 
 @app.route('/send', methods=['GET', 'POST'])
 def send():
-    img_file = request.files['img_file']
+    org_img, dec_img = convertBeforeProcess(request)
+    analyzed_img, detection_result = Color.analyse(dec_img)
+    analyzed_img = convertAfterProcess(analyzed_img)
 
-    
+    return jsonify({
+        "original_img": org_img,
+        "analyzed_img": analyzed_img
+    })
+
+@app.route('/grayout', methods=['GET', 'POST'])
+def grayout():    
+    org_img, dec_img = convertBeforeProcess(request)
+    analyzed_img = cv2.cvtColor(dec_img, cv2.COLOR_BGR2GRAY)
+    analyzed_img = convertAfterProcess(analyzed_img)
+
+    return jsonify({
+        "original_img": org_img,
+        "analyzed_img": analyzed_img
+    })
+
+@app.route('/binarization', methods=['GET', 'POST'])
+def binarization():    
+    org_img, dec_img = convertBeforeProcess(request)
+    retval, analyzed_img = cv2.threshold(dec_img, 150, 255, cv2.THRESH_BINARY)
+    analyzed_img = convertAfterProcess(analyzed_img)
+
+    return jsonify({
+        "original_img": org_img,
+        "analyzed_img": analyzed_img
+    })
+
+@app.route('/canny', methods=['GET', 'POST'])
+def canny():    
+    org_img, dec_img = convertBeforeProcess(request)
+    analyzed_img = cv2.Canny(dec_img,100,200)
+    analyzed_img = convertAfterProcess(analyzed_img)
+
+    return jsonify({
+        "original_img": org_img,
+        "analyzed_img": analyzed_img
+    })
+
+def convertBeforeProcess(request): 
+    img_file = request.files['img_file']
     # Read image and adjust to OpenCV coverable data-type
     read_file = img_file.stream.read()
     bin_img = io.BytesIO(read_file)
@@ -56,17 +97,12 @@ def send():
     # Resize original-image
     result, enc_img = cv2.imencode(".jpg", dec_img, ENCODE_PARAMS)
     org_img = base64.b64encode(enc_img).decode("utf-8")
-        
-    analyzed_img, detection_result = Color.analyse(dec_img)
+    return org_img, dec_img
 
+def convertAfterProcess(analyzed_img): 
     result, enc_img = cv2.imencode(".jpg", analyzed_img, ENCODE_PARAMS)
     analyzed_img = base64.b64encode(enc_img).decode("utf-8")
-        
-
-    return jsonify({
-        "original_img": org_img,
-        "analyzed_img": analyzed_img
-    })
+    return analyzed_img
 
   
 @app.route('/maintenance')
