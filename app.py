@@ -86,6 +86,17 @@ def canny():
         "analyzed_img": analyzed_img
     })
 
+@app.route('/bgrtorgb', methods=['GET', 'POST'])
+def bgrtorgb():    
+    org_img, dec_img = convertBeforeProcess(request)
+    analyzed_img = cv2.cvtColor(dec_img, cv2.COLOR_BGR2RGB)
+    analyzed_img = convertAfterProcess(analyzed_img)
+
+    return jsonify({
+        "original_img": org_img,
+        "analyzed_img": analyzed_img
+    })
+
 def convertBeforeProcess(request): 
     img_file = request.files['img_file']
     # Read image and adjust to OpenCV coverable data-type
