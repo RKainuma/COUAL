@@ -2,6 +2,22 @@
 
 $(document).ready(function () {
     $("#analyze").click(function () {
+        kickAxios('/send');
+    });
+
+    $("#gray").click(function () {
+        kickAxios('/grayout');
+    });
+
+    $("#binarization").click(function () {
+        kickAxios('/binarization');
+    });
+
+    $("#canny").click(function () {
+        kickAxios('/canny');
+    });
+
+    function kickAxios(method) {
         if (fileInput.files.length <= 0) {
             alert("画像を選択してください。");
             return;
@@ -23,7 +39,7 @@ $(document).ready(function () {
         var analyzeImage = function (instance, params) {
             return new Promise(function (resolve, reject) {
                 instance
-                    .post('/send', params)
+                    .post(method, params)
                     .then(response => resolve(response.data))
                     .catch(error => reject(error.response.status))
             });
@@ -36,8 +52,8 @@ $(document).ready(function () {
         analyzeImage(instance, params)
             .then(data => drawCanvas(data.original_img, data.analyzed_img))
             .catch(errorAction)
+    }
 
-    });
     var fileArea = document.getElementById('drag-drop-area');
     var fileInput = document.getElementById('fileInput');
 
