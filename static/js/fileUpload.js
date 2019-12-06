@@ -17,6 +17,10 @@ $(document).ready(function () {
         kickAxios('/canny');
     });
 
+    $("#BGR2RGB").click(function () {
+        kickAxios('/bgrtorgb');
+    });
+
     function kickAxios(method) {
         if (fileInput.files.length <= 0) {
             alert("画像を選択してください。");
