@@ -54,7 +54,7 @@ $(document).ready(function () {
         }
         dispLoading();
         analyzeImage(instance, params)
-            .then(data => drawCanvas(data.original_img, data.analyzed_img))
+            .then(data => drawImage(data.original_img, data.analyzed_img))
             .catch(errorAction)
     }
 
@@ -79,11 +79,11 @@ $(document).ready(function () {
         fileInput.files = files;
     });
 
-    function drawCanvas(originalImgSrc, analyzedImgSrc) {
-        var originalCanvas = document.getElementById("original")
-        originalCanvas.src = "data:image/jpeg;base64," + originalImgSrc;
-        var analyzedCanvas = document.getElementById("analyzed")
-        analyzedCanvas.src = "data:image/jpeg;base64," + analyzedImgSrc;
+    function drawImage(originalImgSrc, analyzedImgSrc) {
+        var originalImage = document.getElementById("original")
+        originalImage.src = "data:image/jpeg;base64," + originalImgSrc;
+        var analyzedImage = document.getElementById("analyzed")
+        analyzedImage.src = "data:image/jpeg;base64," + analyzedImgSrc;
         removeLoading()
     }
 
