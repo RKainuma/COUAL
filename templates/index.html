@@ -2,28 +2,40 @@
 
 {% block body %}
 <div>
-    <h1 id="title"><img id="title_icon" src="../static/images/COUAL.png"
-            style="width:45px;height:45px"></img>&nbsp;&nbsp;COUAL
-        -Web
-        Site Analyzer-</h1>
+    <h1 id="title">COUAL</h1>
 </div>
-<form method="post" action="/send" enctype="multipart/form-data">
-    <div id="drag-drop-cover-area" style="background-color: #dcdcdc;">
-        <div id="drag-drop-area" style="border-style : dashed;border-color: #a9a9a9;">
-            <div class="drag-drop-inside">
-                <p class="drag-drop-info">ここにファイルをドロップ</p>
-                <p>または</p>
-                <p class="drag-drop-buttons"><input id="fileInput" class="file" name="img_file" type="file" value=""
-                        name="image"></p>
-            </div>
+<div id="drag-drop-cover-area" style="background-color: #dcdcdc;">
+    <div id="drag-drop-area" style="border-style : dashed;border-color: #a9a9a9;">
+        <div class="drag-drop-inside">
+            <p class="drag-drop-info">ここにファイルをドロップ</p>
+            <p>または</p>
+            <p class="drag-drop-buttons"><input id="fileInput" class="file" name="img_file" type="file" value=""
+                    name="image"></p>
         </div>
     </div>
-</form>
-<button type=" button" id="analyze" value="色覚判断">色覚判断</button>
-<button type=" button" id="gray" value="グレーアウト">グレーアウト</button>
-<button type=" button" id="binarization" value="2値化">2値化</button>
-<button type=" button" id="canny" value="エッジ検出">エッジ検出</button>
-<button type=" button" id="BGR2RGB" value="BGR→RGB">BGR→RGB</button>
+</div>
+<div id="axis_color_area">
+    <div id=" axis_color_choice_area">
+        <div class="axis_color" style="background-color: #ff3300;"></div>
+        <div class="axis_color" style="background-color: #FF0099;"></div>
+        <div class="axis_color" style="background-color: #ffff00;"></div>
+        <div class="axis_color" style="background-color: #00ff33;"></div>
+        <div class="axis_color" style="background-color: #0033ff;"></div>
+        <div class="axis_color" style="background-color: #33ffff;"></div>
+        <div class="axis_color" style="background-color: red;"></div>
+        <div class="axis_color" style="background-color: green;"></div>
+        <div class="axis_color" style="background-color: indigo;"></div>
+        <div class="axis_color" style="background-color: lightsteelblue;"></div>
+        <div class="axis_color" style="background-color: white;"></div>
+        <div class="axis_color" style="background-color: black;"></div>
+    </div>
+    <div id="axis_color_seleced"></div>
+</div>
+<button type=" button" id="analyze" value="analyze">色覚判断</button>
+<button type=" button" id="gray" value="gray">グレーアウト</button>
+<button type=" button" id="binarization" value="binarization">2値化</button>
+<button type=" button" id="canny" value="canny">エッジ検出</button>
+<button type=" button" id="BGR2RGB" value="BGR2RGB">BGR→RGB</button>
 <div id="upload_img_area">
     <fieldset style="border: 1px double #000;">
         <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
@@ -35,7 +47,7 @@
 <div id="analyzed_img_area">
     <fieldset style="border: 1px double #000;">
         <legend style="background-color: #FF0099; border-radius: 5px; color: #ffffff;">
-            解析後画像
+            変換後画像
         </legend>
         <img id="analyzed" style="width:90%;margin: 20px;"></img>
     </fieldset>
