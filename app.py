@@ -67,7 +67,8 @@ def grayout():
 @app.route('/binarization', methods=['GET', 'POST'])
 def binarization():    
     org_img, dec_img = convertBeforeProcess(request)
-    retval, analyzed_img = cv2.threshold(dec_img, 150, 255, cv2.THRESH_BINARY)
+    analyzed_img = cv2.cvtColor(dec_img, cv2.COLOR_BGR2GRAY)
+    retval, analyzed_img = cv2.threshold(analyzed_img, 150, 255, cv2.THRESH_BINARY)
     analyzed_img = convertAfterProcess(analyzed_img)
 
     return jsonify({
