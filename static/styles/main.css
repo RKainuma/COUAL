@@ -17,12 +17,16 @@ main {
   height: 100%;
   margin-right: 10px;
   float: left;
-  text-align: center;
+  text-align: left;
   background: #404040;
   color: white;
 }
 
-.sidebar_menu:hover {
+#brand-logo {
+  text-align: center;
+}
+
+.can_click_sidebar_menu:hover {
   background: white;
   color: #585858;
 }
