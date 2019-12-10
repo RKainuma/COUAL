@@ -1,25 +1,34 @@
 $(document).ready(function () {
     $("#analyze").click(function () {
-        kickAxios('/send');
+        kickAxios('/send', document.getElementById("fileInput").files[0]);
     });
 
     $("#gray").click(function () {
-        kickAxios('/grayout');
+        kickAxios('/grayout', document.getElementById("fileInput").files[0]);
     });
 
     $("#binarization").click(function () {
-        kickAxios('/binarization');
+        kickAxios('/binarization', document.getElementById("fileInput").files[0]);
     });
 
     $("#canny").click(function () {
-        kickAxios('/canny');
+        kickAxios('/canny', document.getElementById("fileInput").files[0]);
     });
 
     $("#BGR2RGB").click(function () {
-        kickAxios('/bgrtorgb');
+        kickAxios('/bgrtorgb', document.getElementById("fileInput").files[0]);
     });
 
-    function kickAxios(method) {
+    $("#orbDetect").click(function () {
+        kickAxios('/orbDetect');
+    });
+
+    $("#histogram").click(function () {
+        kickAxios('/histogram', document.getElementById("fileInput").files[0]);
+    });
+
+
+    function kickAxios(method, image) {
         if (fileInput.files.length <= 0) {
             alert("画像を選択してください。");
             return;
@@ -29,14 +38,13 @@ $(document).ready(function () {
             return;
         }
         var params = new FormData();
-        var file = document.getElementById("fileInput").files[0]
         var instance = axios.create({
             'responseType': 'json',
             'headers': {
                 'Content-Type': 'application/json'
             }
         });
-        params.append('img_file', file)
+        params.append('img_file', image)
 
         var analyzeImage = function (instance, params) {
             return new Promise(function (resolve, reject) {
