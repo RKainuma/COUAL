@@ -23,11 +23,6 @@ $(document).ready(function () {
         kickAxios('/orbDetect');
     });
 
-    $("#histogram").click(function () {
-        kickAxios('/histogram', document.getElementById("fileInput").files[0]);
-    });
-
-
     function kickAxios(method, image) {
         if (fileInput.files.length <= 0) {
             alert("画像を選択してください。");
