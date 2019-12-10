@@ -7,6 +7,7 @@ $(document).ready(function () {
     $("#original").mousemove(function (e) {
         axesDrawing(e, $(this));
     });
+
     $("#analyzed").mousemove(function (e) {
         axesDrawing(e, $(this));
     });

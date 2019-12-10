@@ -10,6 +10,7 @@ import cv2
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session, jsonify
 from flask_httpauth import HTTPBasicAuth
 import numpy as np
+from matplotlib import pyplot as plt
 
 from colorDetector import Color
 from cloud_firestore import ColorSchemeStorage
@@ -98,10 +99,23 @@ def bgrtorgb():
         "analyzed_img": analyzed_img
     })
 
+@app.route('/histogram', methods=['GET', 'POST'])
+def histogram():
+    org_img, dec_img = convertBeforeProcess(request)
+    color = ('b','g','r')
+    for i,col in enumerate(color):
+        histr = cv2.calcHist([dec_img],[i],None,[256],[0,256])
+        plt.plot(histr,color = col)
+        plt.xlim([0,256])
+    print(plt)
+    plt.show()
+
 def convertBeforeProcess(request): 
     img_file = request.files['img_file']
     # Read image and adjust to OpenCV coverable data-type
     read_file = img_file.stream.read()
+    print("read_file")
+    print(read_file)
     bin_img = io.BytesIO(read_file)
     np_img = np.asarray(bytearray(bin_img.read()), dtype=np.uint8)
     dec_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
