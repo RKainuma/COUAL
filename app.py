@@ -114,8 +114,6 @@ def convertBeforeProcess(request):
     img_file = request.files['img_file']
     # Read image and adjust to OpenCV coverable data-type
     read_file = img_file.stream.read()
-    print("read_file")
-    print(read_file)
     bin_img = io.BytesIO(read_file)
     np_img = np.asarray(bytearray(bin_img.read()), dtype=np.uint8)
     dec_img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)

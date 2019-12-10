@@ -1,3 +1,41 @@
+html {
+  height: 100%;
+}
+
+body {
+  background-color: #282828;
+  height: 100%;
+}
+
+main {
+  height: 100%;
+}
+
+#sidebar {
+  font-size: 20px;
+  width: 10%;
+  height: 100%;
+  margin-right: 10px;
+  float: left;
+  text-align: center;
+  background: #404040;
+  color: white;
+}
+
+.sidebar_menu:hover {
+  background: white;
+  color: #585858;
+}
+
+.sidebar_menu {
+  margin-bottom: 10px;
+}
+
+#main_window {
+  float: left;
+  width: 85%;
+}
+
 /* image area css start */
 #upload_img_area {
   clear: both;
@@ -8,6 +46,22 @@
 #analyzed_img_area {
   float: left;
   width: 50%;
+}
+
+.image_title {
+  background-color: #FF0099;
+  border-radius: 5px;
+  color: #ffffff;
+}
+
+.image_fieldset {
+  border: 1px double #000;
+}
+
+#original,
+#analyzed {
+  width: 90%;
+  margin: 20px;
 }
 
 /* image area css end */
@@ -23,7 +77,7 @@ button,
   cursor: pointer;
   padding: 4px 0;
   margin-top: 10px;
-  width: 200px;
+  width: 150px;
   height: 30px;
 }
 
@@ -34,18 +88,6 @@ button:hover,
 }
 
 /* Buttom css end */
-/* title display area css start */
-
-#title {
-  position: relative;
-  padding: 0.2em 0.5em;
-  background: linear-gradient(to right, rgb(255, 124, 111), #ffc994);
-  color: white;
-  font-weight: lighter;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.56);
-}
-
-/* title display area css end */
 /* file upload area css start */
 
 #drag-drop-cover-area {
@@ -55,6 +97,12 @@ button:hover,
   margin-bottom: 10px;
   padding: 5px;
   float: left;
+  background-color: #dcdcdc;
+}
+
+#drag-drop-area {
+  border-style: dashed;
+  border-color: #a9a9a9;
 }
 
 div.drag-drop-inside {
