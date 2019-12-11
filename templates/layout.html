@@ -17,10 +17,22 @@
   <script type="text/javascript" src="static/js/analyzeImage.js"></script>
   <script type="text/javascript" src="static/js/sidebar.js"></script>
   <script type="text/javascript" src="static/js/maintenance.js"></script>
+  <script type="text/javascript" src="static/js/zoom.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.0.0/velocity.min.js"></script>
 </head>
 
 <body>
+  <div id="sidebar_div">
+    <aside id="sidebar">
+      <h1 id="brand-logo">COUAL</h1>
+      <nav id="global-nav">
+        <div id="histogram" class="sidebar_menu can_click_sidebar_menu"> &ensp;Histgram</div>
+        <div class="sidebar_menu">&ensp;Setting</div>
+        <div class="sidebar_menu can_click_sidebar_menu">&ensp;&ensp;>BG-Color</div>
+        <div class="sidebar_menu can_click_sidebar_menu">&ensp;&ensp;>Language</div>
+      </nav>
+    </aside>
+  </div>
   <main>
     {% block body %}{% endblock %}
   </main>

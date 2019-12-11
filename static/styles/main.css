@@ -5,24 +5,35 @@ html {
 body {
   background-color: #282828;
   height: 100%;
+  display: flex;
+  margin: 0px
 }
 
 main {
-  height: 100%;
+  padding-top: 10px;
+  width: 90%;
+}
+
+#sidebar_div {
+  width: 10%;
+  background: #404040;
+  margin-right: 10px;
 }
 
 #sidebar {
-  font-size: 20px;
-  width: 10%;
-  height: 100%;
-  margin-right: 10px;
-  float: left;
+  font-size: 16px;
   text-align: left;
   background: #404040;
   color: white;
+  position: sticky;
+  top: 0px;
+  height: 300px;
 }
 
 #brand-logo {
+  margin-top: 0px;
+  padding-top: 10px;
+  font-size: 20px;
   text-align: center;
 }
 
@@ -33,11 +44,6 @@ main {
 
 .sidebar_menu {
   margin-bottom: 10px;
-}
-
-#main_window {
-  float: left;
-  width: 85%;
 }
 
 /* image area css start */
