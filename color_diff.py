@@ -300,32 +300,34 @@ def proceed_color_diff(RGB1, RGB2):
     commonLab1 = XYZ2Lab(XYZ1)
     commonLab2 = XYZ2Lab(XYZ2)
     diff_common = judge_color_diff(commonLab1, commonLab2)  # C型色覚における、RGB1とRGB2の色差
+
     if (diff_common[0] == "FINE") or (diff_common[0] == "D"):
         protanLMS1 = LMS4protan(LMS1)
         protanLMS2 = LMS4protan(LMS2)
-
         protanXYZ1 = LMS2XYZ(protanLMS1)
         protanXYZ2 = LMS2XYZ(protanLMS2)
-
         protanLab1 = XYZ2Lab(protanXYZ1)
         protanLab2 = XYZ2Lab(protanXYZ2)
         diff_protan = judge_color_diff(protanLab1, protanLab2)  # P型色覚における、RGB1とRGB2の色差
+        if (diff_protan[0] == "FINE") or (diff_protan[0] == "D"):
+            deutanLMS1 = LMS4deutan(LMS1)
+            deutanLMS2 = LMS4deutan(LMS2)
+            deutanXYZ1 = LMS2XYZ(deutanLMS1)
+            deutanXYZ2 = LMS2XYZ(deutanLMS2)
+            deutanLab1 = XYZ2Lab(deutanXYZ1)
+            deutanLab2 = XYZ2Lab(deutanXYZ2)
+            diff_deutan = judge_color_diff(deutanLab1, deutanLab2)  # D型色覚における、RGB1とRGB2の色差
 
-        deutanLMS1 = LMS4deutan(LMS1)
-        deutanLMS2 = LMS4deutan(LMS2)
-
-        deutanXYZ1 = LMS2XYZ(deutanLMS1)
-        deutanXYZ2 = LMS2XYZ(deutanLMS2)
-
-        deutanLab1 = XYZ2Lab(deutanXYZ1)
-        deutanLab2 = XYZ2Lab(deutanXYZ2)
-        diff_deutan = judge_color_diff(deutanLab1, deutanLab2)  # D型色覚における、RGB1とRGB2の色差
-        warning = judge_color_valid(diff_common[0], diff_protan[0], diff_deutan[0])  # P型とD型にとって判別しにくい場合はTrue
-
+            if (diff_deutan[0] == "FINE") or (diff_deutan[0] == "D"):
+                warning = False
+            else:
+                warning = False
+        else:
+            warning = True
     else:
         warning = False
 
-    return warning, diff_common, diff_protan, diff_deutan
+    return warning
 
 
 if __name__ == '__main__':
@@ -390,7 +392,7 @@ if __name__ == '__main__':
     elif args.debug:
         warning, diff_common, diff_protan, diff_deutan = proceed_color_diff_for_debug(RGB1, RGB2)
     else:
-        warning, diff_common, diff_protan, diff_deutan = proceed_color_diff(RGB1, RGB2)
+        warning= proceed_color_diff(RGB1, RGB2)
         is_msg = False
 
     if warning is True:
