@@ -36,4 +36,20 @@ $(document).ready(function () {
         analyzeImage(instance, params)
             .catch(errorAction)
     }
+
+    $('.sub-menu > a').on('click', function (e) {
+        e.preventDefault();
+        var $subNav = $(this).next('.sub-menu-nav');
+        if ($subNav.css("display") === "none") {
+            $(this).addClass('is-active');
+            $subNav.velocity('slideDown', {
+                duration: 400
+            });
+        } else {
+            $(this).removeClass('is-active');
+            $subNav.velocity('slideUp', {
+                duration: 400
+            });
+        }
+    });
 });
