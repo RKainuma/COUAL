@@ -6,7 +6,7 @@ body {
   background-color: #282828;
   height: 100%;
   display: flex;
-  margin: 0px
+  margin: 0px;
 }
 
 main {
@@ -21,13 +21,20 @@ main {
 }
 
 #sidebar {
-  font-size: 16px;
   text-align: left;
   background: #404040;
   color: white;
   position: sticky;
   top: 0px;
   height: 300px;
+}
+
+#global-nav .sub-menu>a {
+  top: 0;
+  bottom: 0;
+  right: 18px;
+  width: 8px;
+  height: 8px;
 }
 
 #brand-logo {
@@ -37,13 +44,20 @@ main {
   text-align: center;
 }
 
+.can_click_sidebar_menu {
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
 .can_click_sidebar_menu:hover {
   background: white;
   color: #585858;
 }
 
-.sidebar_menu {
-  margin-bottom: 10px;
+.side_a_menu>a {
+  font-weight: bold;
+  background: linear-gradient(transparent 50%, #4b0082 50%);
 }
 
 /* image area css start */
@@ -190,3 +204,30 @@ div.drag-drop-inside {
 }
 
 /* axis color css end */
+/* help css start */
+#help_area {
+  height: 20%;
+  width: 80%;
+  display: none;
+  position: fixed;
+  background: #191970;
+  box-shadow: 0px 0px 0px 5px #191970;
+  border: dashed 2px white;
+  padding: 0.2em 0.5em;
+  color: white;
+  margin-left: 10%;
+  margin-top: 100px;
+}
+
+#help_area:after {
+  position: fixed;
+  content: '';
+  right: -7px;
+  top: -7px;
+  border-width: 0 15px 15px 0;
+  border-style: solid;
+  border-color: #191970 #fff #191970;
+  box-shadow: -1px 1px 1px rgba(0, 0, 0, 0.15);
+}
+
+/* help css end */
