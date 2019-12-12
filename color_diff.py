@@ -408,4 +408,3 @@ if __name__ == '__main__':
         print("\033[32m D型の色差判定: {} / SCORE: {} \033[0m\n".format(diff_deutan[2], diff_deutan[1]))
     else:
         print("\n")
-
