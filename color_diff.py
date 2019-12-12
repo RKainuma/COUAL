@@ -5,11 +5,10 @@ import cv2
 import numpy as np
 import sys
 
-
 def calc_commonLab(inputRGB):
     """C型色覚のLab値"""
     XYZ = RGB2XYZ(inputRGB)
-    commonLab = XYZ4Lab(XYZ)
+    commonLab = XYZ2Lab(XYZ)
 
     return commonLab
 
@@ -20,7 +19,7 @@ def calc_protanLab(inputRGB):
     LMS = XYZ2LMS(XYZ)
     protanLMS = LMS4protan(LMS)
     protanXYZ = LMS2XYZ(protanLMS)
-    protanLab = XYZ4Lab(protanXYZ)
+    protanLab = XYZ2Lab(protanXYZ)
 
     return protanLab
 
@@ -31,7 +30,7 @@ def calc_deutanLab(inputRGB):
     LMS = XYZ2LMS(XYZ)
     deutanLMS = LMS4deutan(LMS)
     deutanXYZ = LMS2XYZ(deutanLMS)
-    deutanLab = XYZ4Lab(deutanXYZ)
+    deutanLab = XYZ2Lab(deutanXYZ)
 
     return deutanLab
 
@@ -127,7 +126,7 @@ def LMS2XYZ(inputLMS):
     return outputXYZ
 
 
-def XYZ4Lab(inputXYZ):
+def XYZ2Lab(inputXYZ):
     """XYZ表色系からLab表色系への変換"""
     whiteXYZd50 = np.array([96.42, 100.0, 82.49])  # D50における白色点のXYZ値(Xn, Yn, Zn)
 
@@ -290,13 +289,27 @@ def judge_color_valid(diff_common, diff_protan, diff_deutan):
 
 def proceed_color_diff(RGB1, RGB2):
     """２つのRGBを比較し、色覚異常者にとって判別しづらい配色がないかを判定"""
-    commonLab1 = calc_commonLab(RGB1)  # RGB1に対する、C型色覚のLab値
-    protanLab1 = calc_protanLab(RGB1)  # RGB1に対する、P型色覚のLab値
-    deutanLab1 = calc_deutanLab(RGB1)  # RGB1に対する、D型色覚のLab値
+    # Process for RGB1
+    XYZ1 = RGB2XYZ(RGB1)
+    LMS1 = XYZ2LMS(XYZ1)
+    commonLab1 = XYZ2Lab(XYZ1)
+    protanLMS1 = LMS4protan(LMS1)
+    protanXYZ1 = LMS2XYZ(protanLMS1)
+    protanLab1 = XYZ2Lab(protanXYZ1)
+    deutanLMS1 = LMS4deutan(LMS1)
+    deutanXYZ1 = LMS2XYZ(deutanLMS1)
+    deutanLab1 = XYZ2Lab(deutanXYZ1)
 
-    commonLab2 = calc_commonLab(RGB2)  # RGB2に対する、C型色覚のLab値
-    protanLab2 = calc_protanLab(RGB2)  # RGB2に対する、P型色覚のLab値
-    deutanLab2 = calc_deutanLab(RGB2)  # RGB2に対する、D型色覚のLab値
+    # Process forRGB2
+    XYZ2 = RGB2XYZ(RGB2)
+    LMS2 = XYZ2LMS(XYZ2)
+    commonLab2 = XYZ2Lab(XYZ2)
+    protanLMS2 = LMS4protan(LMS2)
+    protanXYZ2 = LMS2XYZ(protanLMS2)
+    protanLab2 = XYZ2Lab(protanXYZ2)
+    deutanLMS2 = LMS4deutan(LMS2)
+    deutanXYZ2 = LMS2XYZ(deutanLMS2)
+    deutanLab2 = XYZ2Lab(deutanXYZ2)
 
     diff_common = judge_color_diff(commonLab1, commonLab2)  # C型色覚における、RGB1とRGB2の色差
     diff_protan = judge_color_diff(protanLab1, protanLab2)  # P型色覚における、RGB1とRGB2の色差
@@ -311,7 +324,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='入力された２つのRGB値から色覚タイプごとの色差判定を行う')
     parser.add_argument('rgb1', help='比較するRGB1')
     parser.add_argument('rgb2', help='比較するRGB2')
-    parser.add_argument("--verbose", action="store_true", default=False,help='一貫処理の関数を呼ぶかのフラグ')
+    parser.add_argument("--verbose", action="store_true", default=False,help='This is verbose running.')
+    parser.add_argument("--debug", action="store_true", default=False,help='This is debug running.')
     args = parser.parse_args()
 
     try:
@@ -323,8 +337,32 @@ if __name__ == '__main__':
     try:
         RGB2 = tuple(map(lambda x: int(x), args.rgb2.split("-")))
     except ValueError:
-        print("\033[35m use \"-\" to split for RGB2\033[0m")
+        print("\033[35m use \"-\" to split for RGB2 \033[0m")
         sys.exit()
+
+    if args.verbose and args.debug:
+        raise ValueError("\033[35m Only one option is available \033[0m")
+    else:
+        pass
+
+    def proceed_color_diff_for_debug(RGB1, RGB2):
+        """line_profilerで検証用関数"""
+        commonLab1 = calc_commonLab(RGB1)  # RGB1に対する、C型色覚のLab値
+        protanLab1 = calc_protanLab(RGB1)  # RGB1に対する、P型色覚のLab値
+        deutanLab1 = calc_deutanLab(RGB1)  # RGB1に対する、D型色覚のLab値
+
+        commonLab2 = calc_commonLab(RGB2)  # RGB2に対する、C型色覚のLab値
+        protanLab2 = calc_protanLab(RGB2)  # RGB2に対する、P型色覚のLab値
+        deutanLab2 = calc_deutanLab(RGB2)  # RGB2に対する、D型色覚のLab値
+
+        diff_common = judge_color_diff(commonLab1, commonLab2)  # C型色覚における、RGB1とRGB2の色差
+        diff_protan = judge_color_diff(protanLab1, protanLab2)  # P型色覚における、RGB1とRGB2の色差
+        diff_deutan = judge_color_diff(deutanLab1, deutanLab2)  # D型色覚における、RGB1とRGB2の色差
+
+        warning = judge_color_valid(diff_common[0], diff_protan[0], diff_deutan[0])  # P型とD型にとって判別しにくい場合はTrue
+
+        return warning, diff_common, diff_protan, diff_deutan
+
 
     if args.verbose:
         commonLab1 = calc_commonLab(RGB1)
@@ -340,6 +378,8 @@ if __name__ == '__main__':
         diff_deutan = judge_color_diff(deutanLab1, deutanLab2)
 
         warning = judge_color_valid(diff_common[0], diff_protan[0], diff_deutan[0])
+    elif args.debug:
+        warning, diff_common, diff_protan, diff_deutan = proceed_color_diff_for_debug(RGB1, RGB2)
     else:
         warning, diff_common, diff_protan, diff_deutan = proceed_color_diff(RGB1, RGB2)
 
