@@ -352,8 +352,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='入力された２つのRGB値から色覚タイプごとの色差判定を行う')
     parser.add_argument('rgb1', help='比較するRGB1')
     parser.add_argument('rgb2', help='比較するRGB2')
-    parser.add_argument("--verbose", action="store_true", default=False,help='This is verbose running.')
-    parser.add_argument("--debug", action="store_true", default=False,help='This is debug running.')
+    parser.add_argument("--verbose", action="store_true", default=False, help='This is verbose running.')
+    parser.add_argument("--debug", action="store_true", default=False, help='This is debug running.')
     args = parser.parse_args()
 
     try:
