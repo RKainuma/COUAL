@@ -4,6 +4,7 @@ import argparse
 import cv2
 import numpy as np
 import sys
+from timeit import timeit, default_timer
 
 def calc_commonLab(inputRGB):
     """C型色覚のLab値"""
@@ -374,6 +375,7 @@ if __name__ == '__main__':
         pass
 
     is_msg = True
+    process_speed = None
 
     if args.verbose:
         commonLab1 = calc_commonLab(RGB1)
@@ -391,6 +393,7 @@ if __name__ == '__main__':
         warning = judge_color_valid(diff_common[0], diff_protan[0], diff_deutan[0])
     elif args.debug:
         warning, diff_common, diff_protan, diff_deutan = proceed_color_diff_for_debug(RGB1, RGB2)
+        process_speed = timeit('proceed_color_diff_for_debug(RGB1, RGB2)', globals=globals(), number=1000)
     else:
         warning= proceed_color_diff(RGB1, RGB2)
         is_msg = False
@@ -401,6 +404,7 @@ if __name__ == '__main__':
         result_msg = "全色覚にとって判別しやすい配色となっています。"
     else:
         raise ValueError("\033[35m An error occured \033[0m")
+
     print("\n\033[4m RGB1: {} / RGB2: {}  ==> {} \033[0m".format(RGB1, RGB2, result_msg))
     if is_msg:
         print("\033[34m C型の色差判定: {} / SCORE: {} \033[0m".format(diff_common[2], diff_common[1]))
@@ -408,3 +412,8 @@ if __name__ == '__main__':
         print("\033[32m D型の色差判定: {} / SCORE: {} \033[0m\n".format(diff_deutan[2], diff_deutan[1]))
     else:
         print("\n")
+
+    if process_speed is not None:
+        print("\033[01m Process speed of 1000 times: {} \033[0m\n".format(process_speed))
+    else:
+        print("\033[01m Use debug mode to show 1000 times process speed. \033[0m\n")
