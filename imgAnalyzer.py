@@ -12,7 +12,8 @@ import sys
 from timeit import default_timer
 
 # from cloud_firestore import ColorSchemeStorage
-from color_diff import proceed_color_diff
+# from color_diff import proceed_color_diff # 古い方
+from calc_CIEDE2000 import proceed_color_diff
 from image_processors import hsv_to_bgr_tuple, rgb_to_hsv
 from subtractive_color import execute
 
@@ -54,6 +55,7 @@ class ImgAnalyzer:
         seen = []
         return [x for x in seq if x not in seen and not seen.append(x)]
 
+    # 検証用
     @classmethod
     def split_img(cls, target_img):
         """画像を分割する // ジェネレータとしてroiを出力 // 速度検証用で実際の処理には使わない"""
@@ -64,7 +66,6 @@ class ImgAnalyzer:
         for h_img in np.vsplit(_imgRGB, v_split):  # Y軸方向に分割する
             for v_img in np.hsplit(h_img, h_split):  # X軸方向に分割する
                 yield v_img, False
-
 
     @classmethod
     def scan_img(cls, imgRGB):
@@ -105,6 +106,7 @@ class ImgAnalyzer:
             else:
                 for confront_RGBs in confront_RGBs_lst:
                     RGB1, RGB2 = confront_RGBs[0], confront_RGBs[1]
+
                     warning = proceed_color_diff(RGB1, RGB2)
                     if warning:
                         rectangles.append(rectangle)
@@ -169,9 +171,10 @@ if __name__ == '__main__':
             cnt+=1
 
     else:
-        result_img, cnt = ImgAnalyzer.analyze_img(imgBGR)
-        fname= "./out_{}.jpg".format(datetime.datetime.now())
-        cv2.imwrite(fname, result_img)
+        result_imgRGB, cnt = ImgAnalyzer.analyze_img(imgBGR)
+        result_imgBGR = cv2.cvtColor(result_imgRGB, cv2.COLOR_BGR2RGB)
+        fname= "./out/out_{}.jpg".format(datetime.datetime.now())
+        cv2.imwrite(fname, result_imgBGR)
     e = default_timer() - s
 
     print("\n=====================================")

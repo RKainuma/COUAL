@@ -294,7 +294,6 @@ def proceed_color_diff(RGB1, RGB2):
 
     XYZ1 = RGB2XYZ(RGB1)
     LMS1 = XYZ2LMS(XYZ1)
-
     XYZ2 = RGB2XYZ(RGB2)
     LMS2 = XYZ2LMS(XYZ2)
 
@@ -355,7 +354,10 @@ if __name__ == '__main__':
     parser.add_argument('rgb2', help='比較するRGB2')
     parser.add_argument("--verbose", action="store_true", default=False, help='This is verbose running.')
     parser.add_argument("--debug", action="store_true", default=False, help='This is debug running.')
+
     args = parser.parse_args()
+    is_msg = True
+    process_speed = None
 
     try:
         RGB1 = tuple(map(lambda x: int(x), args.rgb1.split("-")))
@@ -373,9 +375,6 @@ if __name__ == '__main__':
         raise ValueError("\033[35m Only one option is available \033[0m")
     else:
         pass
-
-    is_msg = True
-    process_speed = None
 
     if args.verbose:
         commonLab1 = calc_commonLab(RGB1)
@@ -405,6 +404,8 @@ if __name__ == '__main__':
     else:
         raise ValueError("\033[35m An error occured \033[0m")
 
+    print("calc_commonLab(RGB1):{}".format(calc_commonLab(RGB1)))
+    print("calc_commonLab(RGB2):{}".format(calc_commonLab(RGB2)))
     print("\n\033[4m RGB1: {} / RGB2: {}  ==> {} \033[0m".format(RGB1, RGB2, result_msg))
     if is_msg:
         print("\033[34m C型の色差判定: {} / SCORE: {} \033[0m".format(diff_common[2], diff_common[1]))
