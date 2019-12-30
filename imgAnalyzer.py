@@ -7,6 +7,7 @@ from itertools import combinations
 import json
 import numpy as np
 import math
+from multiprocessing import Pool
 import os
 import sys
 from timeit import default_timer
@@ -97,27 +98,38 @@ class ImgAnalyzer:
         imgRGB = cv2.cvtColor(imgBGR, cv2.COLOR_BGR2RGB)
         cnt = 0
 
-        rectangles = []
+        target_rectangles = []
         for img in cls.scan_img(imgRGB):
             roi, rectangle = img[0], img[1]
             confront_RGBs_lst = cls.get_confront_RGBs_lst(roi)
             if confront_RGBs_lst is False:
                 pass
             else:
-                for confront_RGBs in confront_RGBs_lst:
-                    RGB1, RGB2 = confront_RGBs[0], confront_RGBs[1]
-
-                    warning = proceed_color_diff(RGB1, RGB2)
-                    if warning:
-                        rectangles.append(rectangle)
-                        break
-                    else:
-                        pass
+                target_rectangle = {"confront_RGBs": confront_RGBs_lst, "rectangle": rectangle}
+                target_rectangles.append(target_rectangle)
             cnt+=1
+
+        n_cores = os.cpu_count()  # 実行可能コア数の取得
+        with Pool(processes=n_cores) as p:
+            markable_rectangles = p.map(func=judge_target_rectangle, iterable=target_rectangles)
+        rectangles = [i for i in markable_rectangles if i is not None]
 
         marked_imgRGB = cls.mark_as_rectangle(imgRGB, rectangles)
 
         return marked_imgRGB, cnt
+
+
+def judge_target_rectangle(target_rectangles):
+    for i, target_rectangle in enumerate(target_rectangles["confront_RGBs"]):
+        RGB1, RGB2, rectangle = target_rectangle[0], target_rectangle[1], target_rectangles["rectangle"]
+        warning = proceed_color_diff(RGB1, RGB2)
+        if warning:
+            ret = rectangle
+            break
+        else:
+            ret = None
+
+    return ret
 
 
 if __name__ == '__main__':
