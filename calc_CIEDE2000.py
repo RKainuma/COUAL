@@ -189,10 +189,10 @@ def proceed_color_diff(RGB1, RGB2, warning=False):
 # 検証用
 def judge_color_valid(common_diff, protan_diff, deutan_diff, warning=False):
     """C型、P型、D型色覚の色差の結果をもとに配色パターンの正当性を判定"""
-    if (common_diff == "FINE") or (common_diff == "D"):
-        if (protan_diff != "UNEVALUABLE") and (protan_diff != "FINE"):
+    if (common_diff["label"] == "FINE") or (common_diff["label"] == "D"):
+        if (protan_diff["label"] != "UNEVALUABLE") and (protan_diff["label"] != "FINE") and (protan_diff["label"] != "D"):
             warning = True
-        elif (deutan_diff != "UNEVALUABLE") and (deutan_diff != "FINE"):
+        elif (deutan_diff["label"] != "UNEVALUABLE") and (deutan_diff["label"] != "FINE") and (deutan_diff["label"] != "D"):
             warning = True
         else:
             pass
