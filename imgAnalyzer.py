@@ -101,6 +101,7 @@ class ImgAnalyzer:
         target_rectangles = []
         for img in cls.scan_img(imgRGB):
             roi, rectangle = img[0], img[1]
+            roi = execute(roi)
             confront_RGBs_lst = cls.get_confront_RGBs_lst(roi)
             if confront_RGBs_lst is False:
                 pass
