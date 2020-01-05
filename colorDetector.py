@@ -23,7 +23,8 @@ class Color:
 
     @classmethod
     def exist_warning_color(cls, img):
-        target_img = execute(img)
+        # target_img = execute(img)
+        target_img = img
         cls.h, cls.w, cls.c = target_img.shape
         cls.hsv = rgb_to_hsv(target_img)
         return cls.detect_warning_color()
