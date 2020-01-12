@@ -8,7 +8,7 @@ def execute(img):
     colors = colors.astype(np.float32)
 
     # クラスタ数
-    K = 15
+    K = 5
 
        # 最大反復回数: 10、移動量の閾値: 1.0
     criteria = cv2.TERM_CRITERIA_MAX_ITER + cv2.TERM_CRITERIA_EPS, 10, 1.0

@@ -163,6 +163,16 @@ if __name__ == '__main__':
         is_SpeedTest = False
 
     imgBGR = cv2.imread(IMG)
+    height, width = imgBGR.shape[0], imgBGR.shape[1]
+    resized_w = 800
+    coef_resolution = resized_w / width
+    resized_h = coef_resolution * height
+    if height > resized_h:
+        imgBGR = cv2.resize(imgBGR , (int(resized_w), int(resized_h)))
+        print('Resized image size is W: {} // H: {}'.format(resized_w, resized_h))
+    else:
+        print('Image size is W: {} // H: {}'.format(width, height))
+
     ImgAnalyzer = ImgAnalyzer()
     s = default_timer()
 
