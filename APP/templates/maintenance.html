@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div>
+    <h1 id="title">COUAL -Web Site Analyzer- メンテナンスページ</h1>
+</div>
+<section id="maintenance" class="clearfix">
+    <h1 id="color-scheme-msg">POST Color Scheme to CloudFirestore</h1>
+    <form action = "/post_colors" method = "POST" id="post_scheme" class="clearfix">
+        <div class="base-color">
+            <h1>ベースカラー</h1>
+            <p>
+                <span>HSV</span>
+                <br><input type="text" name="base-color" required="required">
+                <br>色の名前
+                <br><input type ="text" name="base-color-name" required="required">
+            </p>
+        </div>
+
+        <div class="neg-color">
+            <h1>ネガティブパターン</h1>
+            <p> 
+                <span>アクセントカラーHSV</span>
+                <br><input type ="text" name="neg1" required="required">
+                <br>色の名前
+                <br><input type ="text" name="neg1-name" required="required">
+                <br>-------------------------------------
+            </p>
+            <button type="button" id="neg-color-plus-btn" data-num="1" required="required">＋</button>
+            <button type="button" id="neg-color-minus-btn" required="required">-</button>
+        </div>
+
+        <div class="pos-color">
+            <h1>ポジティブパターン</h1>
+            <p>
+                <span>アクセントカラーHSV</span>
+                <br><input type ="text" name="pos1" required="required">
+                <br>色の名前
+                <br><input type ="text" name="pos1-name" required="required">
+                <br>-------------------------------------
+            </p>
+            <button type="button" id="pos-color-plus-btn" data-num="1">＋</button>
+            <button type="button" id="pos-color-minus-btn">-</button>
+        </div>
+
+        <div class="post_colors_btn">
+            <p>
+                <input type="submit" value="submit">
+            </p>
+        </div>
+    </form>
+</section>
+{% endblock %}

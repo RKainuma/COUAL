@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+        <link rel="stylesheet"  href="/static/layout.css">
+        <title>Color Cordination</title>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="/static/rgbcolor.js"></script>
+        <script type="text/javascript" src="/static/index.js"></script>
+    </head>
+
+    <body>
+        <main>
+            <section id='main-section'>
+                <section data-name="huebee">
+                    <input class="color-input" value="#F80">
+                    <button class="color-button">Select color</button>
+                    <span class="current-color">Current color</span>
+                </section>
+
+                <section data-name="select">
+                    <h1>Choose Your Color Cordination</h1>
+                    <div>
+                        <p>
+                            <label for="base">Base&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input type="color" id="base" name="base" value="#e66465">
+                            <span id='base_rgb'></span>
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            <label for="main">Main&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input type="color" id="main" name="main" value="#f6b73c">
+                            <span id='main_rgb'></span>
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            <label for="accent">Accent&nbsp;</label>
+                            <input type="color" id="accent" name="accent" value="#f6b73c">
+                            <span id='accent_rgb'></span>
+                        </p>
+                    </div>
+                    <div>
+                        <button type="button" id='calc-diff'>色差を判定</button>
+                    </div>
+                </section>
+
+                <section data-name='result'>
+                    <h2>Result Your Cordination</h2>
+                    <div class='result-box'>
+                        <h3>Base and Main</h3>
+                        <div>
+                            <h4>Type C</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="bm-c-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="bm-c-score"></span>
+                            </p>
+                        </div>
+                        <div>
+                            <h4>Type D</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="bm-d-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="bm-d-score"></span>
+                            </p>
+                        </div>
+                        <div>
+                            <h4>Type P</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="bm-p-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="bm-p-score"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class='result-box'>
+                        <h3>Base and Accent</h3>
+                        <div>
+                            <h4>Type C</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="ba-c-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="ba-c-score"></span>
+                            </p>
+                        </div>
+                        <div>
+                            <h4>Type D</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="ba-d-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="ba-d-score"></span>
+                            </p>
+                        </div>
+                        <div>
+                            <h4>Type P</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="ba-p-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="ba-p-score"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class='result-box'>
+                        <h3>Main and Accent</h3>
+                        <div>
+                            <h4>Type C</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="ma-c-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="ma-c-score"></span>
+                            </p>
+                        </div>
+                        <div>
+                            <h4>Type D</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="ma-d-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="ma-d-score"></span>
+                            </p>
+                        </div>
+                        <div>
+                            <h4>Type P</h4>
+                            <p><em>JIS Result:&nbsp;</em>
+                                <span id="ma-p-jis"></span>
+                            </p>
+                            <p><em>SCORE:&nbsp;</em>
+                                <span id="ma-p-score"></span>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </body>
+</html>

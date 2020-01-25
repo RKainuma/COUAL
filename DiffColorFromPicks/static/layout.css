@@ -1,0 +1,9 @@
+#main-section{
+    margin: 0 auto;
+    width: 80%;
+}
+
+.result-box{
+    width: 30%;
+    float: left;
+}
