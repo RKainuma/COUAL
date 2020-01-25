@@ -1,7 +1,7 @@
 # COUAL
 
 ◆APP
-...メインアプロケーション
+...メインアプリケーション
  
 ◆Experimental Lab
  
