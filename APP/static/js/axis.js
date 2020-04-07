@@ -4,6 +4,11 @@ $(document).ready(function () {
         $('#axis_color_seleced').css('background-color', selectedColor);
     });
 
+    $("#axis_switch_svg").click(function () {
+        $('#xAxis').toggle();
+        $('#yAxis').toggle();
+    });
+
     $("#original").mousemove(function (e) {
         axesDrawing(e, $(this));
     });
