@@ -20,7 +20,11 @@ $(document).ready(function () {
     });
 
     $("#orbDetect").click(function () {
-        kickAxios('/orbDetect');
+        kickAxios('/orbDetect', document.getElementById("fileInput").files[0]);
+    });
+
+    $("#blur").click(function () {
+        kickAxios('/blur', document.getElementById("fileInput").files[0]);
     });
 
     function kickAxios(method, image) {

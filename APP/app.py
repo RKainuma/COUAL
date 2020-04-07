@@ -98,6 +98,17 @@ def bgrtorgb():
         "original_img": org_img,
         "analyzed_img": analyzed_img
     })
+    
+@app.route('/blur', methods=['GET', 'POST'])
+def blur():    
+    org_img, dec_img = convertBeforeProcess(request)
+    analyzed_img = cv2.GaussianBlur(dec_img, (51, 51), 0)
+    analyzed_img = convertAfterProcess(analyzed_img)
+
+    return jsonify({
+        "original_img": org_img,
+        "analyzed_img": analyzed_img
+    })
 
 @app.route('/histogram', methods=['GET', 'POST'])
 def histogram():
